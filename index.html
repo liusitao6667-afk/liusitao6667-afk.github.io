@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>刘思涛test1 · 个人主页</title>
+<style>
+  :root {
+    --bg: #fdf6ee;
+    --card: #ffffff;
+    --text: #4a3728;
+    --text-secondary: #7a6a5c;
+    --accent: #c17f59;
+    --accent-hover: #a86d4a;
+    --border: #e8d9cc;
+    --shadow: 0 2px 16px rgba(74, 55, 40, 0.08);
+    --radius: 16px;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+    background-image:
+      radial-gradient(ellipse at 20% 20%, rgba(193, 127, 89, 0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(140, 160, 120, 0.06) 0%, transparent 50%);
+  }
+
+  .container {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+  }
+
+  /* ---- 头像 ---- */
+  .avatar-wrapper {
+    margin-top: 20px;
+  }
+
+  .avatar {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #fff;
+    box-shadow: 0 4px 20px rgba(74, 55, 40, 0.12);
+    background: linear-gradient(135deg, #f0e2d3 0%, #e8d5c0 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    color: #c17f59;
+    user-select: none;
+  }
+
+  /* ---- 名字 ---- */
+  .name {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--text);
+  }
+
+  /* ---- 简介 ---- */
+  .bio {
+    font-size: 15px;
+    color: var(--text-secondary);
+    text-align: center;
+    line-height: 1.7;
+    max-width: 360px;
+    margin-top: -10px;
+  }
+
+  /* ---- 链接列表 ---- */
+  .links {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .link-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    text-decoration: none;
+    color: var(--text);
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.25s ease;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+  }
+
+  .link-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(74, 55, 40, 0.14);
+    border-color: var(--accent);
+  }
+
+  .link-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .icon-github   { background: #f5eedc; }
+  .icon-wechat   { background: #e0f0da; }
+  .icon-weibo    { background: #fde8e4; }
+  .icon-bilibili { background: #e6e0f5; }
+  .icon-douyin   { background: #dce8f5; }
+  .icon-xiaohongshu { background: #fde4e8; }
+  .icon-email    { background: #e0ecee; }
+  .icon-twitter  { background: #dcecf8; }
+
+  .link-label {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .link-label small {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: 400;
+  }
+
+  .arrow {
+    margin-left: auto;
+    color: #c4b5a5;
+    font-size: 18px;
+  }
+
+  /* ---- 联系方式 ---- */
+  .contact-section {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 22px;
+    box-shadow: var(--shadow);
+  }
+
+  .contact-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+  }
+
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    font-size: 15px;
+  }
+
+  .contact-item .emoji {
+    font-size: 18px;
+    width: 28px;
+    text-align: center;
+  }
+
+  /* ---- 底部 ---- */
+  .footer {
+    font-size: 13px;
+    color: #b8a898;
+    margin-top: 8px;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+  }
+
+  /* ---- 入场动画 ---- */
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate {
+    animation: fadeUp 0.6s ease forwards;
+    opacity: 0;
+  }
+
+  .animate:nth-child(1) { animation-delay: 0.00s; }
+  .animate:nth-child(2) { animation-delay: 0.08s; }
+  .animate:nth-child(3) { animation-delay: 0.16s; }
+  .animate:nth-child(4) { animation-delay: 0.24s; }
+  .animate:nth-child(5) { animation-delay: 0.32s; }
+  .animate:nth-child(6) { animation-delay: 0.40s; }
+
+  /* ---- 响应式 ---- */
+  @media (max-width: 480px) {
+    body {
+      padding: 24px 16px;
+    }
+    .name {
+      font-size: 24px;
+    }
+    .avatar {
+      width: 90px;
+      height: 90px;
+      font-size: 38px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- 头像 -->
+  <div class="avatar-wrapper animate">
+    <div class="avatar" id="avatar" title="点击更换照片">
+      🌿
+    </div>
+  </div>
+
+  <!-- 名字 -->
+  <h1 class="name animate">刘思涛test</h1>
+
+  <!-- 个人简介 -->
+  <p class="bio animate">
+    测试测试<br>
+   1
+  </p>
+
+  <!-- 社交链接 -->
+  <div class="links">
+    <a class="link-card animate" href="https://github.com/" target="_blank" rel="noopener">
+      <div class="link-icon icon-github">🐙</div>
+      <div class="link-label">
+        GitHub
+        <small>代码仓库与项目</small>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+
+    <a class="link-card animate" href="#" target="_blank" rel="noopener">
+      <div class="link-icon icon-wechat">💬</div>
+      <div class="link-label">
+        微信
+        <small>扫码添加好友</small>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+
+    <a class="link-card animate" href="https://weibo.com/" target="_blank" rel="noopener">
+      <div class="link-icon icon-weibo">📢</div>
+      <div class="link-label">
+        微博
+        <small>日常动态分享</small>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+
+    <a class="link-card animate" href="https://bilibili.com/" target="_blank" rel="noopener">
+      <div class="link-icon icon-bilibili">📺</div>
+      <div class="link-label">
+        Bilibili
+        <small>视频与创作</small>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+
+    <a class="link-card animate" href="https://xiaohongshu.com/" target="_blank" rel="noopener">
+      <div class="link-icon icon-xiaohongshu">📕</div>
+      <div class="link-label">
+        小红书
+        <small>生活记录与分享</small>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+
+  <!-- 联系方式 -->
+  <div class="contact-section animate">
+    <div class="contact-title">联系方式</div>
+    <div class="contact-item">
+      <span class="emoji">📧</span>
+      <span>liusitao6@163.com</span>
+    </div>
+    <div class="contact-item">
+      <span class="emoji">📱</span>
+      <span>+86 138-xxxx-xxxx</span>
+    </div>
+    <div class="contact-item">
+      <span class="emoji">📍</span>
+      <span>中国</span>
+    </div>
+  </div>
+
+  <!-- 底部 -->
+  <div class="footer">© 2026 刘思涛</div>
+
+</div>
+
+<script>
+// 点击头像更换照片（使用文件选择器）
+const avatar = document.getElementById('avatar');
+avatar.addEventListener('click', () => {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        avatar.style.background = 'none';
+        avatar.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = event.target.result;
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.borderRadius = '50%';
+        img.style.objectFit = 'cover';
+        avatar.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  input.click();
+});
+</script>
+
+</body>
+</html>
