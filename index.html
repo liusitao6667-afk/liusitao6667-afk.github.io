@@ -3,37 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>刘思涛test1 · 个人主页</title>
+<title>刘思涛 · 个人主页</title>
 <style>
   :root {
-    --bg: #fdf6ee;
+    --bg: #ffb6c1;
     --card: #ffffff;
     --text: #4a3728;
     --text-secondary: #7a6a5c;
-    --accent: #c17f59;
-    --accent-hover: #a86d4a;
+    --accent: #07c160;
+    --accent-hover: #06ad56;
     --border: #e8d9cc;
     --shadow: 0 2px 16px rgba(74, 55, 40, 0.08);
     --radius: 16px;
   }
 
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-    background: var(--bg);
+    background: #ffb6c1;
     color: var(--text);
     min-height: 100vh;
     display: flex;
     justify-content: center;
     padding: 40px 20px;
-    background-image:
-      radial-gradient(ellipse at 20% 20%, rgba(193, 127, 89, 0.06) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 80%, rgba(140, 160, 120, 0.06) 0%, transparent 50%);
   }
 
   .container {
@@ -46,9 +39,7 @@
   }
 
   /* ---- 头像 ---- */
-  .avatar-wrapper {
-    margin-top: 20px;
-  }
+  .avatar-wrapper { margin-top: 20px; }
 
   .avatar {
     width: 110px;
@@ -64,7 +55,10 @@
     font-size: 48px;
     color: #c17f59;
     user-select: none;
+    cursor: pointer;
+    transition: transform 0.3s ease;
   }
+  .avatar:hover { transform: scale(1.05); }
 
   /* ---- 名字 ---- */
   .name {
@@ -107,6 +101,10 @@
     transition: all 0.25s ease;
     box-shadow: var(--shadow);
     cursor: pointer;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
   }
 
   .link-card:hover {
@@ -126,14 +124,7 @@
     flex-shrink: 0;
   }
 
-  .icon-github   { background: #f5eedc; }
-  .icon-wechat   { background: #e0f0da; }
-  .icon-weibo    { background: #fde8e4; }
-  .icon-bilibili { background: #e6e0f5; }
-  .icon-douyin   { background: #dce8f5; }
-  .icon-xiaohongshu { background: #fde4e8; }
-  .icon-email    { background: #e0ecee; }
-  .icon-twitter  { background: #dcecf8; }
+  .icon-wechat   { background: #d4f5e2; }
 
   .link-label {
     display: flex;
@@ -152,38 +143,111 @@
     font-size: 18px;
   }
 
-  /* ---- 联系方式 ---- */
-  .contact-section {
-    width: 100%;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 24px 22px;
-    box-shadow: var(--shadow);
-  }
-
-  .contact-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: 16px;
-  }
-
-  .contact-item {
+  /* ---- 微信弹出层 ---- */
+  .wechat-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 8px 0;
-    font-size: 15px;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
   }
 
-  .contact-item .emoji {
-    font-size: 18px;
-    width: 28px;
-    text-align: center;
+  .wechat-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
   }
+
+  .wechat-modal {
+    background: #fff;
+    border-radius: 20px;
+    padding: 36px 28px 28px;
+    text-align: center;
+    max-width: 340px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+  }
+
+  .wechat-overlay.active .wechat-modal {
+    transform: translateY(0);
+  }
+
+  .wechat-modal h3 {
+    font-size: 20px;
+    margin-bottom: 6px;
+    color: #333;
+  }
+
+  .wechat-modal .sub {
+    font-size: 13px;
+    color: #999;
+    margin-bottom: 20px;
+  }
+
+  .qr-wrapper {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 16px;
+    border: 2px dashed #e0e0e0;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #fafafa;
+  }
+
+  .qr-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .qr-placeholder {
+    color: #ccc;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .btn-open-wechat {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 12px 32px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font-family: inherit;
+  }
+
+  .btn-open-wechat:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(7, 193, 96, 0.3);
+  }
+
+  .btn-close-modal {
+    margin-top: 14px;
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn-close-modal:hover { color: #666; }
 
   /* ---- 底部 ---- */
   .footer {
@@ -196,14 +260,8 @@
 
   /* ---- 入场动画 ---- */
   @keyframes fadeUp {
-    from {
-      opacity: 0;
-      transform: translateY(24px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
   .animate {
@@ -218,19 +276,159 @@
   .animate:nth-child(5) { animation-delay: 0.32s; }
   .animate:nth-child(6) { animation-delay: 0.40s; }
 
+  /* ---- 跳一跳游戏 ---- */
+  .game-wrapper {
+    width: 100%;
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+    min-height: 420px;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  /* 开始画面 */
+  .game-start {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    z-index: 10;
+    background: #ffffff;
+    opacity: 1;
+    border-radius: var(--radius);
+  }
+
+  .game-title-wrapper {
+    text-align: center;
+  }
+
+  .game-title {
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: 6px;
+    color: #333;
+  }
+
+  .game-title span {
+    display: inline-block;
+    animation: titleBounce 1.2s ease-in-out infinite;
+  }
+  .game-title span:nth-child(1) { animation-delay: 0.0s; color: #ff6b6b; }
+  .game-title span:nth-child(2) { animation-delay: 0.2s; color: #ffa94d; }
+  .game-title span:nth-child(3) { animation-delay: 0.4s; color: #69db7c; }
+
+  @keyframes titleBounce {
+    0%, 100% { transform: translateY(0); }
+    30%  { transform: translateY(-18px); }
+    50%  { transform: translateY(0); }
+  }
+
+  .game-author {
+    font-size: 15px;
+    color: #666;
+    margin-top: 8px;
+  }
+
+  .game-copyright {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 4px;
+  }
+
+  .btn-start {
+    background: linear-gradient(135deg, #ff6b6b, #ffa94d);
+    color: #fff;
+    border: none;
+    padding: 12px 48px;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+  }
+
+  .btn-start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+  }
+
+  .btn-start:active {
+    transform: scale(0.96);
+  }
+
+  .game-hint {
+    font-size: 13px;
+    color: #bbb;
+  }
+
+  /* 得分 */
+  .game-score {
+    display: none;
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 36px;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  /* 游戏结束覆盖层 */
+  .game-over {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    align-items: center;
+    justify-content: center;
+    z-index: 4;
+    border-radius: var(--radius);
+  }
+
+  .game-over-box {
+    background: #fff;
+    border-radius: 20px;
+    padding: 32px 36px;
+    text-align: center;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.2);
+  }
+
+  .game-over-box h3 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 12px;
+  }
+
+  .final-score {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 4px;
+  }
+
+  .best-score {
+    font-size: 14px;
+    color: #aaa;
+    margin-bottom: 18px;
+  }
+
   /* ---- 响应式 ---- */
   @media (max-width: 480px) {
-    body {
-      padding: 24px 16px;
-    }
-    .name {
-      font-size: 24px;
-    }
-    .avatar {
-      width: 90px;
-      height: 90px;
-      font-size: 38px;
-    }
+    body { padding: 24px 16px; }
+    .name { font-size: 24px; }
+    .avatar { width: 90px; height: 90px; font-size: 38px; }
   }
 </style>
 </head>
@@ -241,91 +439,140 @@
   <!-- 头像 -->
   <div class="avatar-wrapper animate">
     <div class="avatar" id="avatar" title="点击更换照片">
-      🌿
+      <img src="avatar.jpg" alt="头像" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
     </div>
   </div>
 
   <!-- 名字 -->
-  <h1 class="name animate">刘思涛test</h1>
+  <h1 class="name animate">刘思涛</h1>
 
   <!-- 个人简介 -->
   <p class="bio animate">
-    测试测试<br>
-   1
+    欢迎使用网页小游戏
   </p>
+
+  <!-- ========== 跳一跳游戏 ========== -->
+  <div class="game-wrapper animate" id="gameWrapper">
+    <!-- 开始画面 -->
+    <div class="game-start" id="gameStart">
+      <div class="game-title-wrapper">
+        <h2 class="game-title" id="gameTitle">
+          <span>跳</span><span>一</span><span>跳</span>
+        </h2>
+        <p class="game-author">作者：刘思涛</p>
+        <p class="game-copyright">本游戏版权归作者所有</p>
+      </div>
+      <button class="btn-start" id="btnStart">开始游戏</button>
+      <p class="game-hint">按住屏幕蓄力，松开跳跃</p>
+    </div>
+    <!-- 游戏画布（游戏开始时动态创建） -->
+    <div id="canvasContainer" style="display:none;"></div>
+    <!-- 得分 -->
+    <div class="game-score" id="gameScore">0</div>
+    <!-- 游戏结束 -->
+    <div class="game-over" id="gameOver">
+      <div class="game-over-box">
+        <h3>游戏结束</h3>
+        <p class="final-score">得分：<span id="finalScore">0</span></p>
+        <p class="best-score">最高分：<span id="bestScore">0</span></p>
+        <button class="btn-start" id="btnRestart">再来一次</button>
+      </div>
+    </div>
+  </div>
 
   <!-- 社交链接 -->
   <div class="links">
-    <a class="link-card animate" href="https://github.com/" target="_blank" rel="noopener">
-      <div class="link-icon icon-github">🐙</div>
-      <div class="link-label">
-        GitHub
-        <small>代码仓库与项目</small>
-      </div>
-      <span class="arrow">→</span>
-    </a>
-
-    <a class="link-card animate" href="#" target="_blank" rel="noopener">
+    <button class="link-card animate" id="btnWechat">
       <div class="link-icon icon-wechat">💬</div>
       <div class="link-label">
         微信
-        <small>扫码添加好友</small>
+        <small>点击添加好友</small>
       </div>
       <span class="arrow">→</span>
-    </a>
+    </button>
 
-    <a class="link-card animate" href="https://weibo.com/" target="_blank" rel="noopener">
-      <div class="link-icon icon-weibo">📢</div>
-      <div class="link-label">
-        微博
-        <small>日常动态分享</small>
-      </div>
-      <span class="arrow">→</span>
-    </a>
-
-    <a class="link-card animate" href="https://bilibili.com/" target="_blank" rel="noopener">
-      <div class="link-icon icon-bilibili">📺</div>
-      <div class="link-label">
-        Bilibili
-        <small>视频与创作</small>
-      </div>
-      <span class="arrow">→</span>
-    </a>
-
-    <a class="link-card animate" href="https://xiaohongshu.com/" target="_blank" rel="noopener">
-      <div class="link-icon icon-xiaohongshu">📕</div>
-      <div class="link-label">
-        小红书
-        <small>生活记录与分享</small>
-      </div>
-      <span class="arrow">→</span>
-    </a>
   </div>
 
-  <!-- 联系方式 -->
-  <div class="contact-section animate">
-    <div class="contact-title">联系方式</div>
-    <div class="contact-item">
-      <span class="emoji">📧</span>
-      <span>liusitao6@163.com</span>
-    </div>
-    <div class="contact-item">
-      <span class="emoji">📱</span>
-      <span>+86 138-xxxx-xxxx</span>
-    </div>
-    <div class="contact-item">
-      <span class="emoji">📍</span>
-      <span>中国</span>
-    </div>
-  </div>
 
   <!-- 底部 -->
   <div class="footer">© 2026 刘思涛</div>
 
 </div>
 
+<!-- 微信弹出层 -->
+<div class="wechat-overlay" id="wechatOverlay">
+  <div class="wechat-modal">
+    <h3 id="wechatTitle">添加微信好友</h3>
+    <p class="sub" id="wechatSub">扫描二维码添加好友</p>
+
+    <div class="qr-wrapper" id="qrWrapper">
+      <img id="qrImage" src="wechat-qr.jpg" alt="微信二维码"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+      <div class="qr-placeholder" style="display:none;">
+        📱<br>二维码加载失败<br>请检查文件
+      </div>
+    </div>
+
+    <!-- 桌面端按钮 -->
+    <button class="btn-open-wechat" id="btnOpenWechatDesktop" style="display:none;">
+      💻 打开电脑微信
+    </button>
+
+    <!-- 移动端按钮组 -->
+    <div id="mobileActions" style="display:none;">
+      <button class="btn-open-wechat" id="btnOpenWechatMobile">
+        📱 打开微信App
+      </button>
+      <p class="mobile-hint">如无法唤起，请<strong>长按</strong>上方二维码保存到相册，<br>再打开微信"扫一扫"从相册选取</p>
+    </div>
+
+    <br>
+    <button class="btn-close-modal" id="btnCloseModal">关闭</button>
+  </div>
+</div>
+
+<style>
+  .mobile-hint {
+    font-size: 12px;
+    color: #999;
+    margin-top: 10px;
+    line-height: 1.6;
+  }
+  .btn-save-qr {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff;
+    color: #07c160;
+    border: 1.5px solid #07c160;
+    padding: 10px 24px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font-family: inherit;
+    margin-right: 8px;
+  }
+  .btn-save-qr:hover {
+    background: #f0fdf5;
+  }
+</style>
+
 <script>
-// 点击头像更换照片（使用文件选择器）
+// ---- 设备检测 ----
+function getDeviceType() {
+  const ua = navigator.userAgent;
+  const isMobile = /Android|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+  const isTablet = /iPad|Android(?!.*Mobile)/i.test(ua) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+  if (isTablet) return 'tablet';
+  if (isMobile) return 'mobile';
+  return 'desktop';
+}
+
+// ---- 头像更换 ----
 const avatar = document.getElementById('avatar');
 avatar.addEventListener('click', () => {
   const input = document.createElement('input');
@@ -351,6 +598,659 @@ avatar.addEventListener('click', () => {
   };
   input.click();
 });
+
+// ---- 微信弹窗 ----
+const overlay = document.getElementById('wechatOverlay');
+const btnWechat = document.getElementById('btnWechat');
+const btnClose = document.getElementById('btnCloseModal');
+const btnDesktop = document.getElementById('btnOpenWechatDesktop');
+const btnMobile = document.getElementById('btnOpenWechatMobile');
+const mobileActions = document.getElementById('mobileActions');
+const wechatTitle = document.getElementById('wechatTitle');
+const wechatSub = document.getElementById('wechatSub');
+const deviceType = getDeviceType();
+
+btnWechat.addEventListener('click', () => {
+  // 根据设备显示不同内容
+  if (deviceType === 'desktop') {
+    btnDesktop.style.display = 'inline-flex';
+    mobileActions.style.display = 'none';
+    wechatTitle.textContent = '添加微信好友';
+    wechatSub.textContent = '使用手机微信扫描二维码，或打开电脑微信';
+  } else {
+    // 手机或平板
+    btnDesktop.style.display = 'none';
+    mobileActions.style.display = 'block';
+    wechatTitle.textContent = '添加微信好友';
+    wechatSub.textContent = '点击下方按钮打开微信，或保存二维码扫码';
+  }
+  overlay.classList.add('active');
+});
+
+btnClose.addEventListener('click', () => {
+  overlay.classList.remove('active');
+});
+
+overlay.addEventListener('click', (e) => {
+  if (e.target === overlay) overlay.classList.remove('active');
+});
+
+// ---- 打开微信（通用函数）----
+function tryOpenWechat(scheme) {
+  const start = Date.now();
+
+  // 使用 iframe 方式（对移动端更友好，避免跳转失败后页面空白）
+  const iframe = document.createElement('iframe');
+  iframe.style.display = 'none';
+  iframe.src = scheme;
+  document.body.appendChild(iframe);
+
+  setTimeout(() => {
+    document.body.removeChild(iframe);
+    // 如果 1.2 秒后还在当前页，说明唤起失败
+    if (Date.now() - start < 1500 && document.hidden === false) {
+      alert('未能自动打开微信。\n请使用手机微信扫描二维码添加好友。');
+    }
+  }, 1200);
+}
+
+// 桌面端：打开电脑微信
+btnDesktop.addEventListener('click', () => {
+  tryOpenWechat('weixin://');
+});
+
+// 移动端：打开微信App
+btnMobile.addEventListener('click', () => {
+  // 移动端优先使用微信扫一扫 scheme
+  tryOpenWechat('weixin://dl/scan');
+});
+
+// ---- ESC 关闭弹窗 ----
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') overlay.classList.remove('active');
+});
+</script>
+
+<script>
+// ==================== 跳一跳游戏 ====================
+(function() {
+  const canvasContainer = document.getElementById('canvasContainer');
+  const wrapper = document.getElementById('gameWrapper');
+  const startScreen = document.getElementById('gameStart');
+  const gameOverScreen = document.getElementById('gameOver');
+  const scoreDisplay = document.getElementById('gameScore');
+  const finalScoreEl = document.getElementById('finalScore');
+  const bestScoreEl = document.getElementById('bestScore');
+
+  const W = 400;
+  const H = 420;
+  const ISO_ANGLE = Math.PI / 6;
+  const MAX_POWER = 100;
+  const CHARGE_SPEED = 55;
+  const POWER_TO_DIST = 3.5;
+
+  let canvas = null;
+  let ctx = null;
+  let blocks = [];
+  let currentIdx = 0;
+  let player = { x: 0, y: 0, z: 0 };
+  let camera = { x: 0, y: 0 };
+  let score = 0;
+  let bestScore = 0;
+  let gameState = 'idle'; // idle | charging | jumping | falling | over
+  let chargePower = 0;
+  let jumpFrom = null;
+  let jumpTarget = null;
+  let jumpT = 0;
+  let jumpDuration = 0;
+  let landedOnBlock = null;
+  let particles = [];
+  let animId = null;
+  let perfectText = null; // "完美"文字动画
+
+  try {
+    bestScore = parseInt(localStorage.getItem('jump_best')) || 0;
+    bestScoreEl.textContent = bestScore;
+  } catch(e) {}
+
+  function resize() {
+    const rect = wrapper.getBoundingClientRect();
+    const w = Math.min(rect.width, 480);
+    canvas.width = w * 2;
+    canvas.height = 420 * 2;
+    canvas.style.width = w + 'px';
+    canvas.style.height = '420px';
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.scale(2, 2);
+  }
+
+  function isoX(wx, wy) {
+    return (wx - wy) * Math.cos(ISO_ANGLE) + W/2 + camera.x;
+  }
+  function isoY(wx, wy, z) {
+    return (wx + wy) * Math.sin(ISO_ANGLE) + H/2 + 70 + camera.y - z;
+  }
+
+  function hexToRgb(hex) {
+    return {
+      r: parseInt(hex.slice(1,3), 16),
+      g: parseInt(hex.slice(3,5), 16),
+      b: parseInt(hex.slice(5,7), 16)
+    };
+  }
+
+  function brighten(hex, a) {
+    let {r,g,b} = hexToRgb(hex);
+    r = Math.min(255, r + Math.floor((255-r)*a));
+    g = Math.min(255, g + Math.floor((255-g)*a));
+    b = Math.min(255, b + Math.floor((255-b)*a));
+    return `rgb(${r},${g},${b})`;
+  }
+
+  function darken(hex, a) {
+    let {r,g,b} = hexToRgb(hex);
+    r = Math.floor(r * (1 - a));
+    g = Math.floor(g * (1 - a));
+    b = Math.floor(b * (1 - a));
+    return `rgb(${r},${g},${b})`;
+  }
+
+  function drawTopFace(cx, cy, w, d, color) {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + w, cy + w * 0.577);
+    ctx.lineTo(cx, cy + w * 1.155);
+    ctx.lineTo(cx - w, cy + w * 0.577);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function drawRightFace(cx, cy, w, h, color) {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + w, cy + w * 0.577);
+    ctx.lineTo(cx + w, cy + w * 0.577 + h);
+    ctx.lineTo(cx, cy + h);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function drawLeftFace(cx, cy, w, h, color) {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx, cy + h);
+    ctx.lineTo(cx - w, cy + w * 0.577 + h);
+    ctx.lineTo(cx - w, cy + w * 0.577);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function drawBlock(b) {
+    const topCX = isoX(b.x, b.y);
+    const topCY = isoY(b.x, b.y, b.h);
+    const halfW = b.w / 2;
+    const halfD = b.d / 2;
+
+    drawTopFace(topCX, topCY, halfW, halfD, brighten(b.color, 0.15));
+    drawRightFace(topCX, topCY + halfW * 0.577, halfD, b.h, darken(b.color, 0.15));
+    drawLeftFace(topCX, topCY + halfW * 0.577, halfD, b.h, darken(b.color, 0.35));
+  }
+
+  const blockColors = ['#ffb3ba','#ffdfba','#ffffba','#baffc9','#bae1ff','#e8d5b0','#d4c4f0','#f0c4d4','#ffd4a8','#b8e8d0'];
+
+  function initBlocks() {
+    blocks = [{
+      x: 0, y: 0, w: 70, d: 70, h: 55,
+      color: blockColors[Math.floor(Math.random() * blockColors.length)]
+    }];
+    for (let i = 0; i < 4; i++) addBlock();
+  }
+
+  function addBlock() {
+    const last = blocks[blocks.length - 1];
+    const dir = Math.random() < 0.5 ? 1 : -1;
+    const dist = 100 + Math.random() * 170;
+    const axis = Math.random() < 0.55 ? 'x' : 'y';
+    const nw = 30 + Math.random() * 60;
+    const nd = 30 + Math.random() * 60;
+
+    let nx = last.x, ny = last.y;
+    if (axis === 'x') nx += dir * dist;
+    else ny += dir * dist;
+
+    // 确保新方块不和老方块重叠
+    let overlap = false;
+    for (let i = Math.max(0, blocks.length - 3); i < blocks.length; i++) {
+      const b = blocks[i];
+      if (Math.abs(nx - b.x) < 60 && Math.abs(ny - b.y) < 60) { overlap = true; break; }
+    }
+    if (overlap) { nx += dir * 60; ny += dir * 30; }
+
+    blocks.push({
+      x: nx, y: ny,
+      w: nw, d: nd,
+      h: 35 + Math.random() * 45,
+      color: blockColors[Math.floor(Math.random() * blockColors.length)]
+    });
+  }
+
+  function resetGame() {
+    initBlocks();
+    currentIdx = 0;
+    player = { x: blocks[0].x, y: blocks[0].y, z: blocks[0].h };
+    score = 0;
+    scoreDisplay.textContent = '0';
+    camera.x = 0;
+    camera.y = 0;
+    chargePower = 0;
+    gameState = 'idle';
+    particles = [];
+    perfectText = null;
+    landedOnBlock = null;
+  }
+
+  function drawPlayer() {
+    const px = isoX(player.x, player.y);
+    const py = isoY(player.x, player.y, player.z);
+    const squish = gameState === 'charging' ? Math.max(0.45, 1 - chargePower / 160) : 1;
+    const w = 18;
+    const h = 28 * squish;
+    const bodyW = w * (2 - squish);
+
+    ctx.save();
+    ctx.translate(px, py);
+
+    // 阴影
+    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    ctx.beginPath();
+    ctx.ellipse(0, 4, bodyW * 0.55, 4, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 身体
+    const grad = ctx.createLinearGradient(0, -h/2, 0, h/2);
+    grad.addColorStop(0, '#5c5c5c');
+    grad.addColorStop(1, '#2a2a2a');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, bodyW/2, h/2, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 头部
+    ctx.fillStyle = '#444';
+    ctx.beginPath();
+    ctx.arc(0, -h/2 - 1, bodyW * 0.48, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 眼睛
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(-3, -h/2 - 3, 3.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(3, -h/2 - 3, 3.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#111';
+    ctx.beginPath();
+    ctx.arc(-3, -h/2 - 4, 1.8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(3, -h/2 - 4, 1.8, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 名字
+    ctx.fillStyle = '#333';
+    ctx.font = 'bold 10px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('刘思涛', 0, -h/2 - 13);
+
+    ctx.restore();
+  }
+
+  function spawnParticles(x, y, count, color) {
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x, y,
+        vx: (Math.random() - 0.5) * 5,
+        vy: -(Math.random() * 5 + 1),
+        life: 1,
+        size: 1.5 + Math.random() * 3,
+        color: color || { r: 255, g: 200, b: 60 }
+      });
+    }
+  }
+
+  function updateParticles() {
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.life -= 0.025;
+      if (p.life <= 0) { particles.splice(i, 1); continue; }
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.08;
+    }
+  }
+
+  function drawParticles() {
+    particles.forEach(p => {
+      ctx.fillStyle = `rgba(${p.color.r},${p.color.g},${p.color.b},${p.life})`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }
+
+  function updateCamera() {
+    const b = blocks[currentIdx];
+    const tx = -isoX(b.x, b.y) + W / 2;
+    const ty = -(isoY(b.x, b.y, 0) - H / 2 - 70);
+    camera.x += (tx - camera.x) * 0.07;
+    camera.y += (ty - camera.y) * 0.07;
+  }
+
+  function render() {
+    if (!ctx || !canvas) return;
+    ctx.clearRect(0, 0, W, H);
+
+    // 背景
+    const bg = ctx.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, '#f0f4f8');
+    bg.addColorStop(0.6, '#dce8f0');
+    bg.addColorStop(1, '#c8dae8');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // 网格
+    ctx.strokeStyle = 'rgba(0,0,0,0.025)';
+    ctx.lineWidth = 0.5;
+    for (let i = -300; i < 300; i += 30) {
+      ctx.beginPath();
+      ctx.moveTo(isoX(i, -300), isoY(i, -300, 0));
+      ctx.lineTo(isoX(i, 300), isoY(i, 300, 0));
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(isoX(-300, i), isoY(-300, i, 0));
+      ctx.lineTo(isoX(300, i), isoY(300, i, 0));
+      ctx.stroke();
+    }
+
+    // 方块
+    blocks.forEach((b, i) => {
+      drawBlock(b);
+      // 下一个目标方块高亮
+      if (i === currentIdx + 1 && gameState === 'idle') {
+        const cx = isoX(b.x, b.y);
+        const cy = isoY(b.x, b.y, b.h);
+        const alpha = 0.15 + Math.sin(Date.now() / 250) * 0.1;
+        ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+        drawTopFace(cx, cy, b.w / 2, b.d / 2, '#fff');
+
+        // 中心点
+        ctx.fillStyle = 'rgba(255,255,255,0.4)';
+        ctx.beginPath();
+        ctx.arc(cx, cy + b.w * 0.577 / 2, 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+
+    drawParticles();
+    drawPlayer();
+
+    // "完美"文字
+    if (perfectText) {
+      perfectText.life -= 0.02;
+      if (perfectText.life > 0) {
+        const alpha = perfectText.life;
+        const yOff = (1 - perfectText.life) * -40;
+        ctx.fillStyle = `rgba(255,180,60,${alpha})`;
+        ctx.font = 'bold 20px "PingFang SC","Microsoft YaHei",sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('完美!', perfectText.x, perfectText.y + yOff);
+        ctx.fillStyle = `rgba(255,180,60,${alpha * 0.3})`;
+        ctx.font = 'bold 24px "PingFang SC","Microsoft YaHei",sans-serif';
+        ctx.fillText('完美!', perfectText.x, perfectText.y + yOff + 1);
+      } else {
+        perfectText = null;
+      }
+    }
+
+    // 蓄力条
+    if (gameState === 'charging') {
+      const b = blocks[currentIdx];
+      const bx = isoX(b.x, b.y);
+      const by = isoY(b.x, b.y, b.h);
+      const pct = Math.min(chargePower / MAX_POWER, 1);
+
+      ctx.fillStyle = 'rgba(0,0,0,0.12)';
+      ctx.beginPath();
+      ctx.roundRect(bx - 32, by - 48, 64, 8, 4);
+      ctx.fill();
+
+      const barGrad = ctx.createLinearGradient(bx - 32, 0, bx + 32, 0);
+      barGrad.addColorStop(0, '#4ecb71');
+      barGrad.addColorStop(0.45, '#ffd43b');
+      barGrad.addColorStop(1, '#ff6b6b');
+      ctx.fillStyle = barGrad;
+      ctx.beginPath();
+      ctx.roundRect(bx - 31, by - 47, 62 * pct, 6, 3);
+      ctx.fill();
+
+      ctx.fillStyle = '#555';
+      ctx.font = '11px "PingFang SC","Microsoft YaHei",sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('按住蓄力中...', bx, by - 56);
+    }
+  }
+
+  function startJump() {
+    if (gameState !== 'charging') return;
+    const nextIdx = currentIdx + 1;
+    if (nextIdx >= blocks.length) return;
+
+    const targetBlock = blocks[nextIdx];
+    const dirX = targetBlock.x - player.x;
+    const dirY = targetBlock.y - player.y;
+    const len = Math.hypot(dirX, dirY);
+    if (len < 1) return;
+    const nx = dirX / len;
+    const ny = dirY / len;
+
+    // 跳跃距离 = 充能值 × 系数
+    const jumpDist = chargePower * POWER_TO_DIST;
+
+    gameState = 'jumping';
+    jumpFrom = { x: player.x, y: player.y, z: player.z };
+    jumpTarget = {
+      x: player.x + nx * jumpDist,
+      y: player.y + ny * jumpDist,
+      z: targetBlock.h
+    };
+    jumpT = 0;
+    jumpDuration = Math.max(0.32, Math.min(0.55, jumpDist / 500));
+    chargePower = 0;
+  }
+
+  function updateJump(dt) {
+    jumpT += dt;
+    const t = jumpT / jumpDuration;
+
+    if (t >= 1) {
+      // 落地检测：检查是否落在某个方块上
+      const lx = jumpTarget.x;
+      const ly = jumpTarget.y;
+      let landed = false;
+      let perfect = false;
+      let landedBlockIdx = -1;
+
+      for (let i = currentIdx; i < blocks.length; i++) {
+        const b = blocks[i];
+        const halfW = b.w / 2;
+        const halfD = b.d / 2;
+        if (Math.abs(lx - b.x) < halfW && Math.abs(ly - b.y) < halfD) {
+          landed = true;
+          landedBlockIdx = i;
+
+          // 落点距离中心 < 8 为完美
+          const centerDist = Math.hypot(lx - b.x, ly - b.y);
+          if (centerDist < 8) perfect = true;
+          break;
+        }
+      }
+
+      if (landed) {
+        const b = blocks[landedBlockIdx];
+        player.x = b.x;
+        player.y = b.y;
+        player.z = b.h;
+        currentIdx = landedBlockIdx;
+        score++;
+        scoreDisplay.textContent = score;
+        gameState = 'idle';
+
+        const spx = isoX(b.x, b.y);
+        const spy = isoY(b.x, b.y, b.h);
+
+        if (perfect) {
+          spawnParticles(spx, spy, 20, { r: 255, g: 215, b: 0 });
+          perfectText = { x: spx, y: spy - 20, life: 1 };
+          score++;
+          scoreDisplay.textContent = score;
+        } else {
+          spawnParticles(spx, spy, 8, { r: 255, g: 200, b: 60 });
+        }
+
+        while (blocks.length - currentIdx < 4) addBlock();
+        while (currentIdx > 2 && blocks.length > 5) {
+          blocks.shift();
+          currentIdx--;
+        }
+      } else {
+        gameState = 'falling';
+        player.x = lx;
+        player.y = ly;
+        player.z = jumpTarget.z;
+        fallT = 0;
+      }
+      return;
+    }
+
+    const easeT = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    player.x = jumpFrom.x + (jumpTarget.x - jumpFrom.x) * easeT;
+    player.y = jumpFrom.y + (jumpTarget.y - jumpFrom.y) * easeT;
+
+    const dist = Math.hypot(jumpTarget.x - jumpFrom.x, jumpTarget.y - jumpFrom.y);
+    const maxH = Math.max(70, dist * 0.55);
+    player.z = jumpFrom.z + 4 * maxH * t * (1 - t);
+  }
+
+  let fallT = 0;
+  function updateFall(dt) {
+    fallT += dt;
+    player.z -= 550 * dt;
+    if (player.z < -250) gameOver();
+  }
+
+  function gameOver() {
+    gameState = 'over';
+    gameOverScreen.style.display = 'flex';
+    finalScoreEl.textContent = score;
+    if (score > bestScore) {
+      bestScore = score;
+      try { localStorage.setItem('jump_best', bestScore); } catch(e) {}
+    }
+    bestScoreEl.textContent = bestScore;
+    scoreDisplay.style.display = 'none';
+  }
+
+  let lastTime = 0;
+  let loopRunning = false;
+
+  function loop(now) {
+    if (!loopRunning) return;
+    animId = requestAnimationFrame(loop);
+    const dt = Math.min(0.05, (now - lastTime) / 1000);
+    lastTime = now;
+
+    updateParticles();
+    updateCamera();
+
+    if (gameState === 'charging') {
+      chargePower += CHARGE_SPEED * dt;
+      if (chargePower > MAX_POWER) chargePower = MAX_POWER;
+    }
+    if (gameState === 'jumping') updateJump(dt);
+    if (gameState === 'falling') updateFall(dt);
+
+    render();
+  }
+
+  function startLoop() {
+    if (loopRunning) return;
+    loopRunning = true;
+    lastTime = performance.now();
+    animId = requestAnimationFrame(loop);
+  }
+
+  function onDown(e) {
+    if (gameState !== 'idle') return;
+    e.preventDefault();
+    gameState = 'charging';
+    chargePower = 0;
+  }
+
+  function onUp(e) {
+    if (gameState !== 'charging') return;
+    e.preventDefault();
+    startJump();
+  }
+
+  function bindCanvasEvents() {
+    canvas.addEventListener('mousedown', onDown);
+    canvas.addEventListener('mouseup', onUp);
+    canvas.addEventListener('mouseleave', onUp);
+    canvas.addEventListener('touchstart', onDown, { passive: false });
+    canvas.addEventListener('touchend', onUp, { passive: false });
+    canvas.addEventListener('touchcancel', onUp, { passive: false });
+  }
+
+  function startGame() {
+    if (!canvas) {
+      canvas = document.createElement('canvas');
+      canvas.id = 'gameCanvas';
+      canvas.style.cssText = 'display:block;width:100%;height:420px;border-radius:16px;cursor:pointer;touch-action:none;';
+      canvasContainer.appendChild(canvas);
+      ctx = canvas.getContext('2d');
+      bindCanvasEvents();
+    }
+    canvasContainer.style.display = 'block';
+    canvas.style.display = 'block';
+    startScreen.style.display = 'none';
+    gameOverScreen.style.display = 'none';
+    scoreDisplay.style.display = 'block';
+    scoreDisplay.textContent = '0';
+    resize();
+    resetGame();
+    startLoop();
+  }
+
+  function restartGame() {
+    gameOverScreen.style.display = 'none';
+    scoreDisplay.style.display = 'block';
+    scoreDisplay.textContent = '0';
+    resetGame();
+  }
+
+  window.addEventListener('resize', () => {
+    if (loopRunning && canvas) resize();
+  });
+
+  document.getElementById('btnStart').addEventListener('click', startGame);
+  document.getElementById('btnRestart').addEventListener('click', restartGame);
+
+  initBlocks();
+})();
 </script>
 
 </body>
