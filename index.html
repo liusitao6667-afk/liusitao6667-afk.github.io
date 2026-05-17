@@ -1637,9 +1637,17 @@ overlay.addEventListener('click', (e) => {
         break;
       case 'rematch':
         if (confirm('对手邀请再来一局，是否接受？')) { sendMsg({ type: 'rematch_accept' }); startMatch(); }
+        else { sendMsg({ type: 'rematch_reject' }); }
         break;
       case 'rematch_accept':
         startMatch();
+        break;
+      case 'rematch_reject':
+        setStatus('😅 对方拒绝了再来一局');
+        setTimeout(function() {
+          var el = document.getElementById('connStatus');
+          if (el && el.textContent.indexOf('拒绝') >= 0) el.textContent = '';
+        }, 3000);
         break;
     }
   }
@@ -1782,7 +1790,14 @@ overlay.addEventListener('click', (e) => {
     if (confirm('确定要认输吗？')) { sendMsg({ type: 'resign' }); gameActive = false; stopTimer(); showGameOver(false); }
   });
 
-  document.getElementById('btnRematch').addEventListener('click', function() { sendMsg({ type: 'rematch' }); });
+  document.getElementById('btnRematch').addEventListener('click', function() {
+    if (conn && conn.open) {
+      sendMsg({ type: 'rematch' });
+      setStatus('📨 已发送邀请，等待对手回应...');
+    } else {
+      startMatch();
+    }
+  });
 
   gmCanvas.addEventListener('click', function(e) {
     if (!gameActive) return;
