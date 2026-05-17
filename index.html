@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>刘思涛 · 个人主页</title>
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <style>
   :root {
     --bg: #ffb6c1;
@@ -276,6 +277,74 @@
   .animate:nth-child(5) { animation-delay: 0.32s; }
   .animate:nth-child(6) { animation-delay: 0.40s; }
 
+  /* ---- 五子棋游戏 ---- */
+  .gomoku-card { width: 100%; position: relative; overflow: hidden; border-radius: var(--radius); min-height: 380px; }
+  .gomoku-screen { width: 100%; display: flex; flex-direction: column; align-items: center; padding: 24px 16px; }
+  .gm-bg-deco { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .gm-star { position: absolute; font-size: 22px; animation: starFloat 3s ease-in-out infinite; opacity: 0.6; }
+  .gm-star.s1 { top: 10%; left: 8%; animation-delay: 0s; }
+  .gm-star.s2 { top: 15%; right: 10%; animation-delay: 1s; }
+  .gm-star.s3 { bottom: 18%; left: 12%; animation-delay: 0.5s; }
+  .gm-star.s4 { bottom: 10%; right: 8%; animation-delay: 2s; }
+  @keyframes starFloat { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-10px) rotate(15deg); } }
+  #gmLobby { background: linear-gradient(135deg, #fff9e6 0%, #fff0f5 30%, #f0f0ff 60%, #e8f8f0 100%); border-radius: var(--radius); position: relative; min-height: 320px; justify-content: center; gap: 18px; }
+  .gm-title { font-size: 32px; font-weight: 900; background: linear-gradient(135deg, #ff6b6b, #ffa94d); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 4px; z-index: 1; animation: titlePulse 2s ease-in-out infinite; }
+  @keyframes titlePulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+  .gm-subtitle { font-size: 14px; color: #999; margin-top: -10px; z-index: 1; }
+  .gm-lobby-btns { display: flex; gap: 14px; z-index: 1; flex-wrap: wrap; justify-content: center; }
+  .gm-btn { border: none; padding: 13px 32px; border-radius: 50px; font-size: 16px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.25s ease; letter-spacing: 1px; }
+  .gm-btn-create { background: linear-gradient(135deg, #ff6b6b, #ff8787); color: #fff; box-shadow: 0 4px 14px rgba(255,107,107,0.3); }
+  .gm-btn-create:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,107,107,0.4); }
+  .gm-btn-join { background: linear-gradient(135deg, #74c0fc, #4dabf7); color: #fff; box-shadow: 0 4px 14px rgba(77,171,247,0.3); }
+  .gm-btn-join:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(77,171,247,0.4); }
+  .gm-btn-go { background: #69db7c; color: #fff; padding: 10px 20px; font-size: 14px; }
+  .gm-join-box { display: flex; gap: 8px; z-index: 1; }
+  .gm-input { padding: 10px 16px; border-radius: 50px; border: 2px solid #e0e0e0; font-size: 14px; font-family: inherit; width: 160px; outline: none; }
+  .gm-input:focus { border-color: #74c0fc; }
+  .gm-copyright { font-size: 11px; color: #bbb; z-index: 1; margin-top: 4px; }
+  #gmRoom { background: #fff; border-radius: var(--radius); gap: 16px; }
+  .gm-room-header { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .gm-room-badge { font-size: 15px; color: #555; background: #f8f9fa; padding: 6px 14px; border-radius: 20px; }
+  .gm-btn-sm { border: none; padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .gm-btn-copy { background: #e7f5ff; color: #228be6; }
+  .gm-invite-wrap { position: relative; display: inline-block; }
+  .gm-invite-popup { position: absolute; top: 110%; right: 0; background: #fff; border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,0.15); padding: 6px 0; min-width: 200px; z-index: 100; animation: gmFadeIn 0.2s ease; }
+  @keyframes gmFadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+  .gm-invite-opt { display: block; width: 100%; border: none; background: transparent; padding: 10px 18px; font-size: 14px; text-align: left; cursor: pointer; color: #333; font-family: inherit; transition: background 0.15s; }
+  .gm-invite-opt:hover { background: #f5f5f5; }
+  .gm-invite-opt:first-child { border-bottom: 1px solid #f0f0f0; }
+  .gm-players { display: flex; align-items: center; gap: 20px; }
+  .gm-player-card { text-align: center; min-width: 80px; }
+  .gm-player-icon { font-size: 36px; }
+  .gm-player-name { font-size: 14px; font-weight: 600; color: #333; }
+  .gm-player-status { font-size: 12px; color: #999; margin-top: 2px; }
+  .gm-vs { font-size: 18px; font-weight: 900; color: #ddd; }
+  .gm-btn-ready { background: linear-gradient(135deg, #69db7c, #51cf66); color: #fff; box-shadow: 0 4px 14px rgba(105,219,124,0.3); }
+  .gm-btn-leave { background: #f1f3f5; color: #888; padding: 10px 24px; font-size: 14px; }
+  .gm-conn-status { font-size: 12px; color: #adb5bd; }
+  #gmGame { background: #f8f9fa; border-radius: var(--radius); gap: 10px; padding: 12px; }
+  .gm-game-header { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 400px; }
+  .gm-turn-info { font-size: 15px; font-weight: 700; color: #333; }
+  .gm-timer { font-size: 14px; color: #888; font-variant-numeric: tabular-nums; }
+  #gmCanvas { border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); cursor: pointer; touch-action: none; max-width: 100%; }
+  .gm-game-msg { font-size: 12px; color: #f08c00; min-height: 18px; text-align: center; }
+  .gm-game-actions { display: flex; gap: 12px; }
+  .gm-btn-undo { background: #fff3bf; color: #e67700; }
+  .gm-btn-resign { background: #ffe3e3; color: #e03131; }
+  .gm-btn-undo:disabled { opacity: 0.4; cursor: not-allowed; }
+  #gmOver { position: absolute; inset: 0; background: rgba(0,0,0,0.4); align-items: center; justify-content: center; border-radius: var(--radius); z-index: 5; }
+  .gm-over-box { background: #fff; border-radius: 18px; padding: 28px 32px; text-align: center; box-shadow: 0 12px 40px rgba(0,0,0,0.2); }
+  .gm-over-box h3 { font-size: 22px; margin-bottom: 8px; }
+  .gm-over-score { font-size: 14px; color: #888; margin-bottom: 16px; }
+  .gm-over-btns { display: flex; gap: 10px; justify-content: center; }
+  .gm-btn-rematch { background: linear-gradient(135deg, #ffa94d, #ff922b); color: #fff; padding: 10px 24px; font-size: 14px; }
+  .gm-btn-quit { background: #f1f3f5; color: #888; padding: 10px 24px; font-size: 14px; }
+  .gm-room-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .gm-history { width: 100%; padding: 0 16px 12px; text-align: center; background: #fff; border-radius: 0 0 var(--radius) var(--radius); }
+  .gm-history summary { font-size: 13px; color: #888; cursor: pointer; padding: 8px; }
+  .gm-history-list { font-size: 12px; color: #aaa; max-height: 120px; overflow-y: auto; text-align: left; }
+  .gm-history-item { padding: 4px 8px; border-bottom: 1px solid #f5f5f5; }
+
   /* ---- 跳一跳游戏 ---- */
   .game-wrapper {
     width: 100%;
@@ -450,6 +519,59 @@
   <p class="bio animate">
     欢迎使用网页小游戏
   </p>
+
+  <!-- ========== 五子棋游戏 ========== -->
+  <div class="game-wrapper animate" id="gomokuWrapper">
+    <div class="gomoku-card">
+      <div class="gomoku-screen" id="gmLobby">
+        <div class="gm-bg-deco"><span class="gm-star s1">&#x2B50;</span><span class="gm-star s2">&#x2B50;</span><span class="gm-star s3">&#x2728;</span><span class="gm-star s4">&#x2B50;</span></div>
+        <h2 class="gm-title">&#x1F525; 激情五子棋</h2>
+        <p class="gm-subtitle">双人在线对战</p>
+        <div class="gm-lobby-btns">
+          <button class="gm-btn gm-btn-create" id="btnCreateRoom">&#x1F3E0; 创建房间</button>
+          <button class="gm-btn gm-btn-join" id="btnShowJoin">&#x1F50D; 加入房间</button>
+        </div>
+        <div class="gm-join-box" id="joinBox" style="display:none;">
+          <input class="gm-input" id="inputRoomId" placeholder="输入房间号" maxlength="20">
+          <button class="gm-btn gm-btn-go" id="btnJoinRoom">进入</button>
+        </div>
+        <p class="gm-copyright">游戏版权及解释权归刘思涛所有</p>
+      </div>
+      <div class="gomoku-screen" id="gmRoom" style="display:none;">
+        <div class="gm-room-header">
+          <span class="gm-room-badge">&#x1F3E0; 房间号：<strong id="roomIdText">---</strong></span>
+          <div class="gm-invite-wrap" id="inviteWrap">
+            <button class="gm-btn-sm gm-btn-copy" id="btnInvite">&#x1F4E8; 邀请</button>
+            <div class="gm-invite-popup" id="invitePopup" style="display:none;">
+              <button class="gm-invite-opt" id="btnInviteWechat">&#x1F4AC; 发送给微信好友</button>
+              <button class="gm-invite-opt" id="btnInviteCopy">&#x1F4CB; 复制链接</button>
+            </div>
+          </div>
+        </div>
+        <div class="gm-players">
+          <div class="gm-player-card" id="playerSelf"><div class="gm-player-icon">&#x1F600;</div><div class="gm-player-name">我</div><div class="gm-player-status" id="selfStatus">未准备</div></div>
+          <div class="gm-vs">VS</div>
+          <div class="gm-player-card" id="playerOpp"><div class="gm-player-icon">&#x231B;</div><div class="gm-player-name">等待对手...</div><div class="gm-player-status" id="oppStatus">---</div></div>
+        </div>
+        <div class="gm-room-actions">
+          <button class="gm-btn gm-btn-ready" id="btnReady">&#x2705; 准备</button>
+          <button class="gm-btn gm-btn-leave" id="btnLeaveRoom">&#x1F6AA; 退出房间</button>
+        </div>
+        <div class="gm-conn-status" id="connStatus">等待对手加入...</div>
+      </div>
+      <div class="gomoku-screen" id="gmGame" style="display:none;">
+        <div class="gm-game-header"><div class="gm-turn-info" id="turnInfo">&#x26AB; 黑方回合</div><div class="gm-timer" id="gameTimer">00:00</div></div>
+        <canvas id="gmCanvas"></canvas>
+        <div class="gm-game-msg" id="gmGameMsg"></div>
+        <div class="gm-game-actions"><button class="gm-btn-sm gm-btn-undo" id="btnUndo">&#x21A9; 悔棋</button><button class="gm-btn-sm gm-btn-resign" id="btnResign">&#x1F3F3; 认输</button></div>
+      </div>
+      <div class="gomoku-screen" id="gmOver" style="display:none;">
+        <div class="gm-over-box"><h3 id="gmResultText">---</h3><p class="gm-over-score" id="gmScoreText"></p>
+          <div class="gm-over-btns"><button class="gm-btn gm-btn-rematch" id="btnRematch">&#x1F504; 再来一局</button><button class="gm-btn gm-btn-quit" id="btnQuitGame">&#x1F6AA; 退出</button></div></div>
+      </div>
+      <div class="gm-history" id="gmHistory"><details><summary>&#x1F4CA; 历史比分记录</summary><div class="gm-history-list" id="historyList">暂无记录</div></details></div>
+    </div>
+  </div>
 
   <!-- ========== 跳一跳游戏 ========== -->
   <div class="game-wrapper animate" id="gameWrapper">
@@ -1250,6 +1372,508 @@ document.addEventListener('keydown', (e) => {
   document.getElementById('btnRestart').addEventListener('click', restartGame);
 
   initBlocks();
+})();
+</script>
+
+<script>
+// ==================== 五子棋双人对战 ====================
+(function() {
+  const BOARD_SIZE = 15;
+  const CELL = 26;
+  const gmCanvas = document.getElementById('gmCanvas');
+  const ctx = gmCanvas.getContext('2d');
+
+  let peer = null;
+  let conn = null;
+  let roomId = '';
+  let isHost = false;
+  let isReady = false;
+  let oppReady = false;
+  let board = [];
+  let myColor = 0;
+  let currentTurn = 1;
+  let gameActive = false;
+  let moveHistory = [];
+  let gameStartTime = 0;
+  let timerInterval = null;
+  let pendingUndoReq = false;
+
+  function setStatus(msg) {
+    var gmMsg = document.getElementById('gmGameMsg');
+    var connSt = document.getElementById('connStatus');
+    if (gmMsg && document.getElementById('gmGame').style.display !== 'none') gmMsg.textContent = msg;
+    if (connSt) connSt.textContent = msg;
+  }
+
+  function showScreen(screen) {
+    var screens = [document.getElementById('gmLobby'), document.getElementById('gmRoom'), document.getElementById('gmGame')];
+    screens.forEach(function(s) { if (s) s.style.display = 'none'; });
+    var over = document.getElementById('gmOver');
+    if (over) over.style.display = 'none';
+    if (screen) screen.style.display = 'flex';
+  }
+
+  function initBoard() {
+    board = [];
+    for (var r = 0; r < BOARD_SIZE; r++) { board[r] = []; for (var c = 0; c < BOARD_SIZE; c++) board[r][c] = 0; }
+    moveHistory = [];
+    currentTurn = 1;
+    gameActive = true;
+    pendingUndoReq = false;
+    document.getElementById('btnUndo').disabled = true;
+  }
+
+  function drawBoard() {
+    var w = CELL * (BOARD_SIZE + 1);
+    gmCanvas.width = w * 2;
+    gmCanvas.height = w * 2;
+    var cssW = Math.min(w, 400);
+    gmCanvas.style.width = cssW + 'px';
+    gmCanvas.style.height = cssW + 'px';
+    ctx.setTransform(2, 0, 0, 2, 0, 0);
+
+    ctx.fillStyle = '#f5d5a0';
+    ctx.fillRect(0, 0, w, w);
+
+    ctx.strokeStyle = '#8b7355';
+    ctx.lineWidth = 0.8;
+    for (var i = 0; i < BOARD_SIZE; i++) {
+      ctx.beginPath();
+      ctx.moveTo(CELL, CELL + i * CELL);
+      ctx.lineTo(CELL + (BOARD_SIZE - 1) * CELL, CELL + i * CELL);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(CELL + i * CELL, CELL);
+      ctx.lineTo(CELL + i * CELL, CELL + (BOARD_SIZE - 1) * CELL);
+      ctx.stroke();
+    }
+
+    var stars = [[3,3],[3,7],[3,11],[7,3],[7,7],[7,11],[11,3],[11,7],[11,11]];
+    stars.forEach(function(p) {
+      ctx.fillStyle = '#8b7355';
+      ctx.beginPath();
+      ctx.arc(CELL + p[1] * CELL, CELL + p[0] * CELL, 3, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    ctx.fillStyle = '#8b7355';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (var i2 = 0; i2 < BOARD_SIZE; i2++) {
+      ctx.fillText(String.fromCharCode(65 + i2), CELL + i2 * CELL, CELL - 14);
+      ctx.fillText(i2 + 1, CELL - 20, CELL + i2 * CELL);
+    }
+
+    for (var r = 0; r < BOARD_SIZE; r++) {
+      for (var c = 0; c < BOARD_SIZE; c++) {
+        if (board[r][c] === 0) continue;
+        var cx = CELL + c * CELL;
+        var cy = CELL + r * CELL;
+        var rad = CELL * 0.43;
+        var grad = ctx.createRadialGradient(cx - rad * 0.3, cy - rad * 0.3, rad * 0.1, cx, cy, rad);
+        if (board[r][c] === 1) { grad.addColorStop(0, '#555'); grad.addColorStop(1, '#111'); }
+        else { grad.addColorStop(0, '#fff'); grad.addColorStop(1, '#ccc'); }
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(cx, cy, rad, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = board[r][c] === 1 ? '#000' : '#bbb';
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    }
+
+    if (moveHistory.length > 0) {
+      var last = moveHistory[moveHistory.length - 1];
+      ctx.fillStyle = '#ff0';
+      ctx.beginPath();
+      ctx.arc(CELL + last.c * CELL, CELL + last.r * CELL, 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    var turnEl = document.getElementById('turnInfo');
+    if (!gameActive) { turnEl.textContent = '游戏结束'; return; }
+    var myTurn = (myColor === 1 && currentTurn === 1) || (myColor === 2 && currentTurn === 2);
+    turnEl.textContent = (currentTurn === 1 ? '⚫ 黑方' : '⚪ 白方') + (myTurn ? '（你的回合）' : '（对手回合）');
+  }
+
+  function placePiece(r, c) {
+    if (!gameActive) return false;
+    if (board[r][c] !== 0) return false;
+    var myTurn = (myColor === 1 && currentTurn === 1) || (myColor === 2 && currentTurn === 2);
+    if (!myTurn) return false;
+
+    board[r][c] = currentTurn;
+    moveHistory.push({ r: r, c: c, color: currentTurn });
+    drawBoard();
+    sendMsg({ type: 'move', r: r, c: c });
+    document.getElementById('btnUndo').disabled = false;
+
+    if (checkWin(r, c, currentTurn)) {
+      gameActive = false;
+      stopTimer();
+      var won = (myColor === 1 && currentTurn === 1) || (myColor === 2 && currentTurn === 2);
+      showGameOver(won);
+      return true;
+    }
+    if (moveHistory.length >= BOARD_SIZE * BOARD_SIZE) {
+      gameActive = false;
+      stopTimer();
+      showGameOver(null);
+      return true;
+    }
+    currentTurn = currentTurn === 1 ? 2 : 1;
+    drawBoard();
+    return true;
+  }
+
+  function checkWin(r, c, color) {
+    var dirs = [[0,1],[1,0],[1,1],[1,-1]];
+    for (var d = 0; d < dirs.length; d++) {
+      var dr = dirs[d][0], dc = dirs[d][1];
+      var count = 1;
+      for (var i = 1; i < 5; i++) {
+        var nr = r + dr * i, nc = c + dc * i;
+        if (nr >= 0 && nr < BOARD_SIZE && nc >= 0 && nc < BOARD_SIZE && board[nr][nc] === color) count++;
+        else break;
+      }
+      for (var i2 = 1; i2 < 5; i2++) {
+        var nr2 = r - dr * i2, nc2 = c - dc * i2;
+        if (nr2 >= 0 && nr2 < BOARD_SIZE && nc2 >= 0 && nc2 < BOARD_SIZE && board[nr2][nc2] === color) count++;
+        else break;
+      }
+      if (count >= 5) return true;
+    }
+    return false;
+  }
+
+  function showGameOver(won) {
+    var overEl = document.getElementById('gmOver');
+    overEl.style.display = 'flex';
+    var txt;
+    if (won === true) txt = '🎉 你赢了！';
+    else if (won === false) txt = '😢 你输了';
+    else txt = '🤝 平局';
+    document.getElementById('gmResultText').textContent = txt;
+
+    var elapsed = Math.floor((Date.now() - gameStartTime) / 1000);
+    var min = Math.floor(elapsed / 60), sec = elapsed % 60;
+    document.getElementById('gmScoreText').textContent = '用时 ' + min + '分' + sec + '秒  |  共 ' + moveHistory.length + ' 手';
+    saveHistory(won === true ? 'win' : won === false ? 'lose' : 'draw', elapsed);
+  }
+
+  function saveHistory(resultType, elapsed) {
+    try {
+      var records = JSON.parse(localStorage.getItem('gomoku_history') || '[]');
+      records.unshift({
+        date: new Date().toLocaleString('zh-CN'),
+        result: resultType,
+        moves: moveHistory.length,
+        time: elapsed,
+        opponent: conn ? conn.peer.slice(0, 8) : 'unknown'
+      });
+      if (records.length > 30) records = records.slice(0, 30);
+      localStorage.setItem('gomoku_history', JSON.stringify(records));
+      renderHistory();
+    } catch(e) {}
+  }
+
+  function renderHistory() {
+    var el = document.getElementById('historyList');
+    try {
+      var records = JSON.parse(localStorage.getItem('gomoku_history') || '[]');
+      if (records.length === 0) { el.innerHTML = '暂无记录'; return; }
+      el.innerHTML = records.map(function(r) {
+        var icon = r.result === 'win' ? '🏆' : r.result === 'lose' ? '💔' : '🤝';
+        return '<div class="gm-history-item">' + icon + ' ' + r.date + ' | ' + r.moves + '手 | ' + Math.floor(r.time/60) + '分' + r.time%60 + '秒 | 对手:' + r.opponent + '</div>';
+      }).join('');
+    } catch(e) { el.innerHTML = '暂无记录'; }
+  }
+
+  function requestUndo() {
+    if (!gameActive || moveHistory.length < 2) return;
+    if (pendingUndoReq) { setStatus('已有悔棋请求等待对方处理'); return; }
+    sendMsg({ type: 'undo_req' });
+    pendingUndoReq = true;
+    setStatus('已发送悔棋请求，等待对方确认...');
+  }
+
+  function doUndo() {
+    if (moveHistory.length < 2) return;
+    moveHistory.pop();
+    moveHistory.pop();
+    board = [];
+    for (var r = 0; r < BOARD_SIZE; r++) { board[r] = []; for (var c = 0; c < BOARD_SIZE; c++) board[r][c] = 0; }
+    moveHistory.forEach(function(m) { board[m.r][m.c] = m.color; });
+    currentTurn = moveHistory.length % 2 === 0 ? 1 : 2;
+    pendingUndoReq = false;
+    drawBoard();
+    if (moveHistory.length < 2) document.getElementById('btnUndo').disabled = true;
+  }
+
+  function startTimer() {
+    gameStartTime = Date.now();
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(function() {
+      var elapsed = Math.floor((Date.now() - gameStartTime) / 1000);
+      var min = Math.floor(elapsed / 60), sec = elapsed % 60;
+      document.getElementById('gameTimer').textContent = (min < 10 ? '0' : '') + min + ':' + (sec < 10 ? '0' : '') + sec;
+    }, 1000);
+  }
+
+  function stopTimer() {
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  }
+
+  function sendMsg(data) {
+    if (conn && conn.open) { conn.send(JSON.stringify(data)); }
+  }
+
+  function setupPeer() {
+    if (peer) { peer.destroy(); }
+    peer = new Peer(undefined, { debug: 0 });
+    peer.on('error', function(err) { setStatus('连接错误: ' + err.type); });
+  }
+
+  function setupConnection() {
+    conn.on('open', function() {
+      setStatus('已连接！');
+      var card = document.getElementById('playerOpp');
+      card.querySelector('.gm-player-name').textContent = '对手';
+      card.querySelector('.gm-player-icon').textContent = '😎';
+      document.getElementById('oppStatus').textContent = '未准备';
+    });
+
+    conn.on('data', function(raw) {
+      var data;
+      try { data = JSON.parse(raw); } catch(e) { return; }
+      handleMessage(data);
+    });
+
+    conn.on('close', function() {
+      setStatus('对手断开连接');
+      document.getElementById('oppStatus').textContent = '已离开';
+      var card = document.getElementById('playerOpp');
+      card.querySelector('.gm-player-name').textContent = '等待对手...';
+      card.querySelector('.gm-player-icon').textContent = '⌛';
+      oppReady = false;
+    });
+  }
+
+  function handleMessage(data) {
+    switch (data.type) {
+      case 'ready':
+        oppReady = true;
+        document.getElementById('oppStatus').textContent = '✅ 已准备';
+        checkBothReady();
+        break;
+      case 'move':
+        if (!gameActive) return;
+        board[data.r][data.c] = currentTurn;
+        moveHistory.push({ r: data.r, c: data.c, color: currentTurn });
+        document.getElementById('btnUndo').disabled = false;
+        if (checkWin(data.r, data.c, currentTurn)) {
+          gameActive = false; stopTimer(); showGameOver(false);
+        } else {
+          currentTurn = currentTurn === 1 ? 2 : 1;
+        }
+        drawBoard();
+        break;
+      case 'undo_req':
+        if (confirm('对手请求悔棋，是否同意？')) {
+          sendMsg({ type: 'undo_res', accept: true });
+          doUndo();
+          setStatus('悔棋已生效');
+        } else {
+          sendMsg({ type: 'undo_res', accept: false });
+        }
+        break;
+      case 'undo_res':
+        if (data.accept) { doUndo(); setStatus('悔棋已生效'); }
+        else { pendingUndoReq = false; setStatus('对方拒绝了悔棋'); }
+        break;
+      case 'resign':
+        gameActive = false; stopTimer(); showGameOver(true);
+        break;
+      case 'rematch':
+        if (confirm('对手邀请再来一局，是否接受？')) { sendMsg({ type: 'rematch_accept' }); startMatch(); }
+        break;
+      case 'rematch_accept':
+        startMatch();
+        break;
+    }
+  }
+
+  function checkBothReady() {
+    if (isReady && oppReady) startMatch();
+  }
+
+  function startMatch() {
+    document.getElementById('gmOver').style.display = 'none';
+    showScreen(document.getElementById('gmGame'));
+    initBoard();
+    myColor = isHost ? 1 : 2;
+    drawBoard();
+    startTimer();
+    setStatus('');
+    document.getElementById('btnUndo').disabled = true;
+  }
+
+  // ---- 按钮事件 ----
+  document.getElementById('btnCreateRoom').addEventListener('click', function() {
+    setupPeer();
+    peer.on('open', function(id) {
+      roomId = id;
+      isHost = true;
+      document.getElementById('roomIdText').textContent = roomId;
+      showScreen(document.getElementById('gmRoom'));
+      setStatus('等待对手加入...');
+      document.getElementById('selfStatus').textContent = '未准备';
+      document.getElementById('oppStatus').textContent = '---';
+      document.getElementById('playerOpp').querySelector('.gm-player-name').textContent = '等待对手...';
+      document.getElementById('playerOpp').querySelector('.gm-player-icon').textContent = '⌛';
+      isReady = false; oppReady = false;
+    });
+    peer.on('connection', function(c) {
+      if (conn) conn.close();
+      conn = c;
+      setupConnection();
+    });
+  });
+
+  document.getElementById('btnShowJoin').addEventListener('click', function() {
+    var box = document.getElementById('joinBox');
+    box.style.display = box.style.display === 'none' ? 'flex' : 'none';
+  });
+
+  document.getElementById('btnJoinRoom').addEventListener('click', function() {
+    var inputId = document.getElementById('inputRoomId').value.trim();
+    if (!inputId) return alert('请输入房间号');
+    roomId = inputId;
+    isHost = false;
+    setupPeer();
+    peer.on('open', function() {
+      conn = peer.connect(roomId, { reliable: true });
+      setupConnection();
+      document.getElementById('roomIdText').textContent = roomId;
+      showScreen(document.getElementById('gmRoom'));
+      setStatus('正在连接...');
+      document.getElementById('selfStatus').textContent = '未准备';
+      document.getElementById('oppStatus').textContent = '---';
+      document.getElementById('playerOpp').querySelector('.gm-player-name').textContent = '等待对手...';
+      document.getElementById('playerOpp').querySelector('.gm-player-icon').textContent = '⌛';
+      isReady = false; oppReady = false;
+    });
+    document.getElementById('joinBox').style.display = 'none';
+  });
+
+  var btnInvite = document.getElementById('btnInvite');
+  var invitePopup = document.getElementById('invitePopup');
+  btnInvite.addEventListener('click', function(e) {
+    e.stopPropagation();
+    invitePopup.style.display = invitePopup.style.display === 'none' ? 'block' : 'none';
+  });
+  document.addEventListener('click', function(e) {
+    if (!document.getElementById('inviteWrap').contains(e.target)) {
+      invitePopup.style.display = 'none';
+    }
+  });
+
+  document.getElementById('btnInviteWechat').addEventListener('click', function() {
+    invitePopup.style.display = 'none';
+    var link = window.location.origin + window.location.pathname + '?gmroom=' + roomId;
+    var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (isMobile) {
+      window.open('weixin://', '_blank');
+      setStatus('💬 请在微信中粘贴链接发送给好友');
+    } else {
+      setStatus('💬 请复制链接后通过微信发送给好友');
+    }
+    navigator.clipboard.writeText(link).then(function() {
+      setStatus('💬 链接已复制，请在微信中粘贴发送给好友');
+    }).catch(function() {});
+    setTimeout(function() {
+      var el = document.getElementById('connStatus');
+      if (el && el.textContent.indexOf('链接已复制') >= 0) el.textContent = '等待对手加入...';
+    }, 4000);
+  });
+
+  document.getElementById('btnInviteCopy').addEventListener('click', function() {
+    invitePopup.style.display = 'none';
+    var link = window.location.origin + window.location.pathname + '?gmroom=' + roomId;
+    navigator.clipboard.writeText(link).then(function() {
+      setStatus('✅ 链接已复制！发给好友即可');
+      setTimeout(function() {
+        var el = document.getElementById('connStatus');
+        if (el && el.textContent.indexOf('链接已复制') >= 0) el.textContent = '等待对手加入...';
+      }, 3000);
+    }).catch(function() { prompt('复制以下链接发给好友：', link); });
+  });
+
+  document.getElementById('btnReady').addEventListener('click', function() {
+    isReady = !isReady;
+    var btn = document.getElementById('btnReady');
+    if (isReady) { btn.textContent = '❌ 取消准备'; document.getElementById('selfStatus').textContent = '✅ 已准备'; sendMsg({ type: 'ready' }); }
+    else { btn.textContent = '✅ 准备'; document.getElementById('selfStatus').textContent = '未准备'; }
+    checkBothReady();
+  });
+
+  document.getElementById('btnLeaveRoom').addEventListener('click', function() {
+    if (conn) { conn.close(); conn = null; }
+    if (peer) { peer.destroy(); peer = null; }
+    isReady = false; oppReady = false;
+    stopTimer();
+    showScreen(document.getElementById('gmLobby'));
+  });
+
+  document.getElementById('btnQuitGame').addEventListener('click', function() {
+    if (conn) { sendMsg({ type: 'resign' }); conn.close(); conn = null; }
+    if (peer) { peer.destroy(); peer = null; }
+    isReady = false; oppReady = false;
+    gameActive = false; stopTimer();
+    document.getElementById('gmOver').style.display = 'none';
+    showScreen(document.getElementById('gmLobby'));
+  });
+
+  document.getElementById('btnUndo').addEventListener('click', requestUndo);
+
+  document.getElementById('btnResign').addEventListener('click', function() {
+    if (!gameActive) return;
+    if (confirm('确定要认输吗？')) { sendMsg({ type: 'resign' }); gameActive = false; stopTimer(); showGameOver(false); }
+  });
+
+  document.getElementById('btnRematch').addEventListener('click', function() { sendMsg({ type: 'rematch' }); });
+
+  gmCanvas.addEventListener('click', function(e) {
+    if (!gameActive) return;
+    var myTurn = (myColor === 1 && currentTurn === 1) || (myColor === 2 && currentTurn === 2);
+    if (!myTurn) return;
+    var rect = gmCanvas.getBoundingClientRect();
+    var scaleX = (CELL * (BOARD_SIZE + 1)) / rect.width;
+    var scaleY = (CELL * (BOARD_SIZE + 1)) / rect.height;
+    var x = (e.clientX - rect.left) * scaleX;
+    var y = (e.clientY - rect.top) * scaleY;
+    var c = Math.round((x - CELL) / CELL);
+    var r = Math.round((y - CELL) / CELL);
+    if (r < 0 || r >= BOARD_SIZE || c < 0 || c >= BOARD_SIZE) return;
+    placePiece(r, c);
+  });
+
+  // URL自动加入
+  (function() {
+    var params = new URLSearchParams(window.location.search);
+    var autoRoom = params.get('gmroom');
+    if (autoRoom) {
+      document.getElementById('inputRoomId').value = autoRoom;
+      document.getElementById('btnJoinRoom').click();
+    }
+  })();
+
+  showScreen(document.getElementById('gmLobby'));
+  initBoard();
+  drawBoard();
+  renderHistory();
 })();
 </script>
 
