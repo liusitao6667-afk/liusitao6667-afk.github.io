@@ -545,7 +545,6 @@
         <div class="gm-bg-deco"><span class="gm-star s1">&#x2B50;</span><span class="gm-star s2">&#x2B50;</span><span class="gm-star s3">&#x2728;</span><span class="gm-star s4">&#x2B50;</span></div>
         <h2 class="gm-title">&#x1F525; 激情五子棋</h2>
         <p class="gm-subtitle">双人在线对战</p>
-        <button class="gm-btn-start" id="btnStartGame">&#x1F3AE; 开始游戏</button>
         <div class="gm-lobby-btns">
           <button class="gm-btn gm-btn-create" id="btnCreateRoom">&#x1F3E0; 创建房间</button>
           <button class="gm-btn gm-btn-join" id="btnShowJoin">&#x1F50D; 加入房间</button>
@@ -1716,31 +1715,6 @@ overlay.addEventListener('click', (e) => {
     return !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
   }
 
-  document.getElementById('btnStartGame').addEventListener('click', function() {
-    if (typeof Peer === 'undefined') { alert('网络连接失败，请刷新页面后重试'); return; }
-    setupPeer();
-    peer.on('open', function(id) {
-      roomId = id;
-      isHost = true;
-      var inviteLink = window.location.origin + window.location.pathname + '?gmroom=' + roomId;
-      document.getElementById('roomLink').textContent = roomId;
-      document.getElementById('roomLink').href = inviteLink;
-      showScreen(document.getElementById('gmRoom'));
-      setStatus('等待对手加入...');
-      document.getElementById('selfStatus').textContent = '未准备';
-      document.getElementById('oppStatus').textContent = '---';
-      document.getElementById('playerOpp').querySelector('.gm-player-name').textContent = '等待对手...';
-      document.getElementById('playerOpp').querySelector('.gm-player-icon').textContent = '⌛';
-      isReady = false; oppReady = false;
-      enterFullscreen();
-    });
-    peer.on('connection', function(c) {
-      if (conn) conn.close();
-      conn = c;
-      setupConnection();
-    });
-  });
-
   document.getElementById('btnCreateRoom').addEventListener('click', function() {
     if (typeof Peer === 'undefined') { alert('网络连接失败，请刷新页面后重试'); return; }
     setupPeer();
@@ -1757,6 +1731,7 @@ overlay.addEventListener('click', (e) => {
       document.getElementById('playerOpp').querySelector('.gm-player-name').textContent = '等待对手...';
       document.getElementById('playerOpp').querySelector('.gm-player-icon').textContent = '⌛';
       isReady = false; oppReady = false;
+      enterFullscreen();
     });
     peer.on('connection', function(c) {
       if (conn) conn.close();
@@ -1804,7 +1779,12 @@ overlay.addEventListener('click', (e) => {
     inviteLinkCache = link;
     document.getElementById('inviteModalRoomId').textContent = roomId;
     var qrSrc = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(link);
-    inviteQr.innerHTML = '<img src="' + qrSrc + '" alt="房间二维码" onerror="this.parentElement.innerHTML=\\'<span style=color:#999;font-size:12px;>二维码生成失败<br>请手动复制链接</span>\\'">';
+    inviteQr.innerHTML = '';
+    var qrImg = document.createElement('img');
+    qrImg.src = qrSrc;
+    qrImg.alt = '房间二维码';
+    qrImg.onerror = function() { inviteQr.innerHTML = '<span style="color:#999;font-size:12px;">二维码生成失败<br>请手动复制链接</span>'; };
+    inviteQr.appendChild(qrImg);
     inviteModalOverlay.classList.add('active');
   });
 
