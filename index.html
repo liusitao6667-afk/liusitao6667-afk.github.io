@@ -278,7 +278,7 @@
   .animate:nth-child(6) { animation-delay: 0.40s; }
 
   /* ---- 五子棋游戏 ---- */
-  .gomoku-card { width: 100%; position: relative; overflow: hidden; border-radius: var(--radius); min-height: 380px; }
+  .gomoku-card { width: 100%; position: relative; overflow: visible; border-radius: var(--radius); min-height: 380px; }
   .gomoku-screen { width: 100%; display: flex; flex-direction: column; align-items: center; padding: 24px 16px; }
   .gm-bg-deco { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
   .gm-star { position: absolute; font-size: 22px; animation: starFloat 3s ease-in-out infinite; opacity: 0.6; }
@@ -344,6 +344,8 @@
   .gm-history summary { font-size: 13px; color: #888; cursor: pointer; padding: 8px; }
   .gm-history-list { font-size: 12px; color: #aaa; max-height: 120px; overflow-y: auto; text-align: left; }
   .gm-history-item { padding: 4px 8px; border-bottom: 1px solid #f5f5f5; }
+
+  #gomokuWrapper { overflow: visible; }
 
   /* ---- 跳一跳游戏 ---- */
   .game-wrapper {
@@ -539,7 +541,7 @@
       </div>
       <div class="gomoku-screen" id="gmRoom" style="display:none;">
         <div class="gm-room-header">
-          <span class="gm-room-badge">&#x1F3E0; 房间号：<strong id="roomIdText">---</strong></span>
+          <span class="gm-room-badge">&#x1F3E0; 房间号：<a href="#" id="roomLink" style="color:#228be6; text-decoration:underline; font-weight:700;">---</a></span>
           <div class="gm-invite-wrap" id="inviteWrap">
             <button class="gm-btn-sm gm-btn-copy" id="btnInvite">&#x1F4E8; 邀请</button>
             <div class="gm-invite-popup" id="invitePopup" style="display:none;">
@@ -1673,7 +1675,9 @@ overlay.addEventListener('click', (e) => {
     peer.on('open', function(id) {
       roomId = id;
       isHost = true;
-      document.getElementById('roomIdText').textContent = roomId;
+      var inviteLink = window.location.origin + window.location.pathname + '?gmroom=' + roomId;
+      document.getElementById('roomLink').textContent = roomId;
+      document.getElementById('roomLink').href = inviteLink;
       showScreen(document.getElementById('gmRoom'));
       setStatus('等待对手加入...');
       document.getElementById('selfStatus').textContent = '未准备';
@@ -1703,7 +1707,9 @@ overlay.addEventListener('click', (e) => {
     peer.on('open', function() {
       conn = peer.connect(roomId, { reliable: true });
       setupConnection();
-      document.getElementById('roomIdText').textContent = roomId;
+      var inviteLink = window.location.origin + window.location.pathname + '?gmroom=' + roomId;
+      document.getElementById('roomLink').textContent = roomId;
+      document.getElementById('roomLink').href = inviteLink;
       showScreen(document.getElementById('gmRoom'));
       setStatus('正在连接...');
       document.getElementById('selfStatus').textContent = '未准备';
@@ -1756,6 +1762,18 @@ overlay.addEventListener('click', (e) => {
         if (el && el.textContent.indexOf('链接已复制') >= 0) el.textContent = '等待对手加入...';
       }, 3000);
     }).catch(function() { prompt('复制以下链接发给好友：', link); });
+  });
+
+  document.getElementById('roomLink').addEventListener('click', function(e) {
+    e.preventDefault();
+    var link = document.getElementById('roomLink').href;
+    navigator.clipboard.writeText(link).then(function() {
+      setStatus('✅ 房间链接已复制！');
+      setTimeout(function() {
+        var el = document.getElementById('connStatus');
+        if (el && el.textContent.indexOf('链接已复制') >= 0) el.textContent = '等待对手加入...';
+      }, 3000);
+    }).catch(function() { prompt('房间链接：', link); });
   });
 
   document.getElementById('btnReady').addEventListener('click', function() {
