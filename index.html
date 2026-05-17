@@ -307,12 +307,28 @@
   .gm-room-badge { font-size: 15px; color: #555; background: #f8f9fa; padding: 6px 14px; border-radius: 20px; }
   .gm-btn-sm { border: none; padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
   .gm-btn-copy { background: #e7f5ff; color: #228be6; }
-  .gm-invite-wrap { position: relative; display: inline-block; }
-  .gm-invite-popup { position: absolute; top: 110%; right: 0; background: #fff; border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,0.15); padding: 6px 0; min-width: 200px; z-index: 100; animation: gmFadeIn 0.2s ease; }
-  @keyframes gmFadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
-  .gm-invite-opt { display: block; width: 100%; border: none; background: transparent; padding: 10px 18px; font-size: 14px; text-align: left; cursor: pointer; color: #333; font-family: inherit; transition: background 0.15s; }
-  .gm-invite-opt:hover { background: #f5f5f5; }
-  .gm-invite-opt:first-child { border-bottom: 1px solid #f0f0f0; }
+  .gm-btn-start { border: none; padding: 16px 48px; border-radius: 50px; font-size: 20px; font-weight: 800; cursor: pointer; font-family: inherit; letter-spacing: 2px; z-index: 1; background: linear-gradient(135deg, #ff6b6b, #ffa94d); color: #fff; box-shadow: 0 6px 24px rgba(255,107,107,0.4); transition: all 0.3s ease; animation: startPulse 2s ease-in-out infinite; }
+  @keyframes startPulse { 0%,100% { box-shadow: 0 6px 24px rgba(255,107,107,0.4); } 50% { box-shadow: 0 6px 40px rgba(255,107,107,0.7); } }
+  .gm-btn-start:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 8px 32px rgba(255,107,107,0.5); }
+  .gm-btn-start:active { transform: translateY(0) scale(0.98); }
+  .gm-fullscreen-bar { position: absolute; top: 8px; right: 12px; z-index: 10; }
+  .gm-btn-fs { border: none; background: rgba(0,0,0,0.06); padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-family: inherit; color: #666; transition: background 0.2s; }
+  .gm-btn-fs:hover { background: rgba(0,0,0,0.12); }
+  .gm-invite-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 9999; align-items: center; justify-content: center; }
+  .gm-invite-modal-overlay.active { display: flex; }
+  .gm-invite-modal { background: #fff; border-radius: 20px; padding: 32px 28px 24px; text-align: center; max-width: 360px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.25); animation: gmModalIn 0.3s ease; }
+  @keyframes gmModalIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  .gm-invite-modal h3 { font-size: 20px; margin-bottom: 4px; color: #333; }
+  .gm-invite-modal .gm-invite-roomid { font-size: 24px; font-weight: 800; color: #ff6b6b; margin-bottom: 16px; letter-spacing: 2px; }
+  .gm-invite-qr { width: 180px; height: 180px; margin: 0 auto 16px; border: 2px dashed #e8e8e8; border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #fafafa; }
+  .gm-invite-qr img { width: 100%; height: 100%; object-fit: contain; }
+  .gm-invite-modal .gm-invite-btns { display: flex; gap: 12px; margin-top: 4px; }
+  .gm-invite-modal .gm-invite-btns button { flex: 1; border: none; padding: 12px 16px; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+  .gm-invite-modal .gm-invite-btns .gm-invite-copy { background: #228be6; color: #fff; }
+  .gm-invite-modal .gm-invite-btns .gm-invite-copy:hover { background: #1c7ed6; }
+  .gm-invite-modal .gm-invite-btns .gm-invite-wechat { background: #07c160; color: #fff; }
+  .gm-invite-modal .gm-invite-btns .gm-invite-wechat:hover { background: #06ad56; }
+  .gm-invite-modal .gm-invite-close { margin-top: 14px; border: none; background: transparent; color: #999; font-size: 13px; cursor: pointer; font-family: inherit; }
   .gm-players { display: flex; align-items: center; gap: 20px; }
   .gm-player-card { text-align: center; min-width: 80px; }
   .gm-player-icon { font-size: 36px; }
@@ -529,6 +545,7 @@
         <div class="gm-bg-deco"><span class="gm-star s1">&#x2B50;</span><span class="gm-star s2">&#x2B50;</span><span class="gm-star s3">&#x2728;</span><span class="gm-star s4">&#x2B50;</span></div>
         <h2 class="gm-title">&#x1F525; 激情五子棋</h2>
         <p class="gm-subtitle">双人在线对战</p>
+        <button class="gm-btn-start" id="btnStartGame">&#x1F3AE; 开始游戏</button>
         <div class="gm-lobby-btns">
           <button class="gm-btn gm-btn-create" id="btnCreateRoom">&#x1F3E0; 创建房间</button>
           <button class="gm-btn gm-btn-join" id="btnShowJoin">&#x1F50D; 加入房间</button>
@@ -540,15 +557,10 @@
         <p class="gm-copyright">游戏版权及解释权归刘思涛所有</p>
       </div>
       <div class="gomoku-screen" id="gmRoom" style="display:none;">
+        <div class="gm-fullscreen-bar"><button class="gm-btn-fs" id="btnFsExitRoom" title="退出全屏">&#x2716; 退出全屏</button></div>
         <div class="gm-room-header">
           <span class="gm-room-badge">&#x1F3E0; 房间号：<a href="#" id="roomLink" style="color:#228be6; text-decoration:underline; font-weight:700;">---</a></span>
-          <div class="gm-invite-wrap" id="inviteWrap">
-            <button class="gm-btn-sm gm-btn-copy" id="btnInvite">&#x1F4E8; 邀请</button>
-            <div class="gm-invite-popup" id="invitePopup" style="display:none;">
-              <button class="gm-invite-opt" id="btnInviteWechat">&#x1F4AC; 发送给微信好友</button>
-              <button class="gm-invite-opt" id="btnInviteCopy">&#x1F4CB; 复制链接</button>
-            </div>
-          </div>
+          <button class="gm-btn-sm gm-btn-copy" id="btnInvite">&#x1F4E8; 邀请好友</button>
         </div>
         <div class="gm-players">
           <div class="gm-player-card" id="playerSelf"><div class="gm-player-icon">&#x1F600;</div><div class="gm-player-name">我</div><div class="gm-player-status" id="selfStatus">未准备</div></div>
@@ -562,6 +574,7 @@
         <div class="gm-conn-status" id="connStatus">等待对手加入...</div>
       </div>
       <div class="gomoku-screen" id="gmGame" style="display:none;">
+        <div class="gm-fullscreen-bar"><button class="gm-btn-fs" id="btnFsExitGame" title="退出全屏">&#x2716; 退出全屏</button></div>
         <div class="gm-game-header"><div class="gm-turn-info" id="turnInfo">&#x26AB; 黑方回合</div><div class="gm-timer" id="gameTimer">00:00</div></div>
         <canvas id="gmCanvas"></canvas>
         <div class="gm-game-msg" id="gmGameMsg"></div>
@@ -572,6 +585,22 @@
           <div class="gm-over-btns"><button class="gm-btn gm-btn-rematch" id="btnRematch">&#x1F504; 再来一局</button><button class="gm-btn gm-btn-quit" id="btnQuitGame">&#x1F6AA; 退出</button></div></div>
       </div>
       <div class="gm-history" id="gmHistory"><details><summary>&#x1F4CA; 历史比分记录</summary><div class="gm-history-list" id="historyList">暂无记录</div></details></div>
+    </div>
+
+    <!-- 邀请好友弹窗 -->
+    <div class="gm-invite-modal-overlay" id="inviteModalOverlay">
+      <div class="gm-invite-modal">
+        <h3>&#x1F4E8; 邀请好友对战</h3>
+        <p style="font-size:13px;color:#999;margin-bottom:4px;">房间号</p>
+        <div class="gm-invite-roomid" id="inviteModalRoomId">---</div>
+        <div class="gm-invite-qr" id="inviteQr"><span style="color:#ccc;font-size:13px;">加载中...</span></div>
+        <p style="font-size:11px;color:#bbb;margin-top:2px;">扫描二维码即可加入房间</p>
+        <div class="gm-invite-btns">
+          <button class="gm-invite-copy" id="btnModalCopy">&#x1F4CB; 复制链接</button>
+          <button class="gm-invite-wechat" id="btnModalWechat">&#x1F4AC; 微信发送</button>
+        </div>
+        <button class="gm-invite-close" id="btnModalClose">关闭</button>
+      </div>
     </div>
   </div>
 
@@ -1670,7 +1699,50 @@ overlay.addEventListener('click', (e) => {
   }
 
   // ---- 按钮事件 ----
+  function enterFullscreen() {
+    var el = document.documentElement;
+    if (el.requestFullscreen) { el.requestFullscreen().catch(function() {}); }
+    else if (el.webkitRequestFullscreen) { el.webkitRequestFullscreen(); }
+    else if (el.msRequestFullscreen) { el.msRequestFullscreen(); }
+  }
+  function exitFullscreen() {
+    if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+      if (document.exitFullscreen) { document.exitFullscreen().catch(function() {}); }
+      else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
+      else if (document.msExitFullscreen) { document.msExitFullscreen(); }
+    }
+  }
+  function isFullscreen() {
+    return !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
+  }
+
+  document.getElementById('btnStartGame').addEventListener('click', function() {
+    if (typeof Peer === 'undefined') { alert('网络连接失败，请刷新页面后重试'); return; }
+    setupPeer();
+    peer.on('open', function(id) {
+      roomId = id;
+      isHost = true;
+      var inviteLink = window.location.origin + window.location.pathname + '?gmroom=' + roomId;
+      document.getElementById('roomLink').textContent = roomId;
+      document.getElementById('roomLink').href = inviteLink;
+      showScreen(document.getElementById('gmRoom'));
+      setStatus('等待对手加入...');
+      document.getElementById('selfStatus').textContent = '未准备';
+      document.getElementById('oppStatus').textContent = '---';
+      document.getElementById('playerOpp').querySelector('.gm-player-name').textContent = '等待对手...';
+      document.getElementById('playerOpp').querySelector('.gm-player-icon').textContent = '⌛';
+      isReady = false; oppReady = false;
+      enterFullscreen();
+    });
+    peer.on('connection', function(c) {
+      if (conn) conn.close();
+      conn = c;
+      setupConnection();
+    });
+  });
+
   document.getElementById('btnCreateRoom').addEventListener('click', function() {
+    if (typeof Peer === 'undefined') { alert('网络连接失败，请刷新页面后重试'); return; }
     setupPeer();
     peer.on('open', function(id) {
       roomId = id;
@@ -1701,6 +1773,7 @@ overlay.addEventListener('click', (e) => {
   document.getElementById('btnJoinRoom').addEventListener('click', function() {
     var inputId = document.getElementById('inputRoomId').value.trim();
     if (!inputId) return alert('请输入房间号');
+    if (typeof Peer === 'undefined') { alert('网络连接失败，请刷新页面后重试'); return; }
     roomId = inputId;
     isHost = false;
     setupPeer();
@@ -1721,59 +1794,66 @@ overlay.addEventListener('click', (e) => {
     document.getElementById('joinBox').style.display = 'none';
   });
 
-  var btnInvite = document.getElementById('btnInvite');
-  var invitePopup = document.getElementById('invitePopup');
-  btnInvite.addEventListener('click', function(e) {
-    e.stopPropagation();
-    invitePopup.style.display = invitePopup.style.display === 'none' ? 'block' : 'none';
-  });
-  document.addEventListener('click', function(e) {
-    if (!document.getElementById('inviteWrap').contains(e.target)) {
-      invitePopup.style.display = 'none';
-    }
+  // ---- 邀请弹窗 ----
+  var inviteLinkCache = '';
+  var inviteModalOverlay = document.getElementById('inviteModalOverlay');
+  var inviteQr = document.getElementById('inviteQr');
+
+  document.getElementById('btnInvite').addEventListener('click', function() {
+    var link = window.location.origin + window.location.pathname + '?gmroom=' + roomId;
+    inviteLinkCache = link;
+    document.getElementById('inviteModalRoomId').textContent = roomId;
+    var qrSrc = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(link);
+    inviteQr.innerHTML = '<img src="' + qrSrc + '" alt="房间二维码" onerror="this.parentElement.innerHTML=\\'<span style=color:#999;font-size:12px;>二维码生成失败<br>请手动复制链接</span>\\'">';
+    inviteModalOverlay.classList.add('active');
   });
 
-  document.getElementById('btnInviteWechat').addEventListener('click', function() {
-    invitePopup.style.display = 'none';
-    var link = window.location.origin + window.location.pathname + '?gmroom=' + roomId;
+  document.getElementById('btnModalCopy').addEventListener('click', function() {
+    var link = inviteLinkCache || (window.location.origin + window.location.pathname + '?gmroom=' + roomId);
+    navigator.clipboard.writeText(link).then(function() {
+      setStatus('✅ 链接已复制！');
+    }).catch(function() {
+      prompt('复制以下链接发给好友：', link);
+    });
+    inviteModalOverlay.classList.remove('active');
+  });
+
+  document.getElementById('btnModalWechat').addEventListener('click', function() {
+    var link = inviteLinkCache || (window.location.origin + window.location.pathname + '?gmroom=' + roomId);
     var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     if (isMobile) {
       window.open('weixin://', '_blank');
-      setStatus('💬 请在微信中粘贴链接发送给好友');
-    } else {
-      setStatus('💬 请复制链接后通过微信发送给好友');
     }
     navigator.clipboard.writeText(link).then(function() {
-      setStatus('💬 链接已复制，请在微信中粘贴发送给好友');
+      setStatus('💬 链接已复制，粘贴到微信发送给好友即可');
     }).catch(function() {});
-    setTimeout(function() {
-      var el = document.getElementById('connStatus');
-      if (el && el.textContent.indexOf('链接已复制') >= 0) el.textContent = '等待对手加入...';
-    }, 4000);
+    inviteModalOverlay.classList.remove('active');
   });
 
-  document.getElementById('btnInviteCopy').addEventListener('click', function() {
-    invitePopup.style.display = 'none';
-    var link = window.location.origin + window.location.pathname + '?gmroom=' + roomId;
-    navigator.clipboard.writeText(link).then(function() {
-      setStatus('✅ 链接已复制！发给好友即可');
-      setTimeout(function() {
-        var el = document.getElementById('connStatus');
-        if (el && el.textContent.indexOf('链接已复制') >= 0) el.textContent = '等待对手加入...';
-      }, 3000);
-    }).catch(function() { prompt('复制以下链接发给好友：', link); });
+  document.getElementById('btnModalClose').addEventListener('click', function() {
+    inviteModalOverlay.classList.remove('active');
+  });
+
+  inviteModalOverlay.addEventListener('click', function(e) {
+    if (e.target === inviteModalOverlay) inviteModalOverlay.classList.remove('active');
   });
 
   document.getElementById('roomLink').addEventListener('click', function(e) {
     e.preventDefault();
     var link = document.getElementById('roomLink').href;
+    if (!link || link === '#') return;
     navigator.clipboard.writeText(link).then(function() {
       setStatus('✅ 房间链接已复制！');
-      setTimeout(function() {
-        var el = document.getElementById('connStatus');
-        if (el && el.textContent.indexOf('链接已复制') >= 0) el.textContent = '等待对手加入...';
-      }, 3000);
     }).catch(function() { prompt('房间链接：', link); });
+  });
+
+  document.getElementById('btnFsExitRoom').addEventListener('click', function() { exitFullscreen(); });
+  document.getElementById('btnFsExitGame').addEventListener('click', function() { exitFullscreen(); });
+
+  document.addEventListener('fullscreenchange', function() {
+    if (!isFullscreen()) {
+      // fullscreen exited by ESC or browser UI — stay on current screen
+    }
   });
 
   document.getElementById('btnReady').addEventListener('click', function() {
@@ -1789,7 +1869,8 @@ overlay.addEventListener('click', (e) => {
     if (peer) { peer.destroy(); peer = null; }
     isReady = false; oppReady = false;
     stopTimer();
-    showScreen(document.getElementById('gmLobby'));
+    exitFullscreen();
+    setTimeout(function() { showScreen(document.getElementById('gmLobby')); }, 300);
   });
 
   document.getElementById('btnQuitGame').addEventListener('click', function() {
@@ -1798,7 +1879,8 @@ overlay.addEventListener('click', (e) => {
     isReady = false; oppReady = false;
     gameActive = false; stopTimer();
     document.getElementById('gmOver').style.display = 'none';
-    showScreen(document.getElementById('gmLobby'));
+    exitFullscreen();
+    setTimeout(function() { showScreen(document.getElementById('gmLobby')); }, 300);
   });
 
   document.getElementById('btnUndo').addEventListener('click', requestUndo);
