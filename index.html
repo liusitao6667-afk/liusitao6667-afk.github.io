@@ -608,7 +608,7 @@
       <div class="link-icon icon-wechat">💬</div>
       <div class="link-label">
         微信
-        <small>点击添加好友</small>
+        <small>点击添加作者微信</small>
       </div>
       <span class="arrow">→</span>
     </button>
@@ -635,18 +635,7 @@
       </div>
     </div>
 
-    <!-- 桌面端按钮 -->
-    <button class="btn-open-wechat" id="btnOpenWechatDesktop" style="display:none;">
-      💻 打开电脑微信
-    </button>
-
-    <!-- 移动端按钮组 -->
-    <div id="mobileActions" style="display:none;">
-      <button class="btn-open-wechat" id="btnOpenWechatMobile">
-        📱 打开微信App
-      </button>
-      <p class="mobile-hint">如无法唤起，请<strong>长按</strong>上方二维码保存到相册，<br>再打开微信"扫一扫"从相册选取</p>
-    </div>
+    <p class="mobile-hint">请<strong>长按</strong>上方二维码保存到相册，<br>打开微信"扫一扫"从相册选取。<br>或者在微信中打开此链接的用户直接按住图片即可添加好友</p>
 
     <br>
     <button class="btn-close-modal" id="btnCloseModal">关闭</button>
@@ -725,30 +714,10 @@ avatar.addEventListener('click', () => {
 const overlay = document.getElementById('wechatOverlay');
 const btnWechat = document.getElementById('btnWechat');
 const btnClose = document.getElementById('btnCloseModal');
-const btnDesktop = document.getElementById('btnOpenWechatDesktop');
-const btnMobile = document.getElementById('btnOpenWechatMobile');
-const mobileActions = document.getElementById('mobileActions');
-const wechatTitle = document.getElementById('wechatTitle');
-const wechatSub = document.getElementById('wechatSub');
-const deviceType = getDeviceType();
 
 btnWechat.addEventListener('click', () => {
-  // 根据设备显示不同内容
-  if (deviceType === 'desktop') {
-    btnDesktop.style.display = 'inline-flex';
-    mobileActions.style.display = 'none';
-    wechatTitle.textContent = '添加微信好友';
-    wechatSub.textContent = '使用手机微信扫描二维码，或打开电脑微信';
-  } else {
-    // 手机或平板
-    btnDesktop.style.display = 'none';
-    mobileActions.style.display = 'block';
-    wechatTitle.textContent = '添加微信好友';
-    wechatSub.textContent = '点击下方按钮打开微信，或保存二维码扫码';
-  }
   overlay.classList.add('active');
 });
-
 btnClose.addEventListener('click', () => {
   overlay.classList.remove('active');
 });
@@ -757,40 +726,10 @@ overlay.addEventListener('click', (e) => {
   if (e.target === overlay) overlay.classList.remove('active');
 });
 
-// ---- 打开微信（通用函数）----
-function tryOpenWechat(scheme) {
-  const start = Date.now();
-
-  // 使用 iframe 方式（对移动端更友好，避免跳转失败后页面空白）
-  const iframe = document.createElement('iframe');
-  iframe.style.display = 'none';
-  iframe.src = scheme;
-  document.body.appendChild(iframe);
-
-  setTimeout(() => {
-    document.body.removeChild(iframe);
-    // 如果 1.2 秒后还在当前页，说明唤起失败
-    if (Date.now() - start < 1500 && document.hidden === false) {
-      alert('未能自动打开微信。\n请使用手机微信扫描二维码添加好友。');
-    }
-  }, 1200);
-}
-
-// 桌面端：打开电脑微信
-btnDesktop.addEventListener('click', () => {
-  tryOpenWechat('weixin://');
-});
-
-// 移动端：打开微信App
-btnMobile.addEventListener('click', () => {
-  // 移动端优先使用微信扫一扫 scheme
-  tryOpenWechat('weixin://dl/scan');
-});
-
-// ---- ESC 关闭弹窗 ----
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') overlay.classList.remove('active');
-});
+	// ---- ESC 关闭弹窗 ----
+	document.addEventListener('keydown', (e) => {
+	  if (e.key === 'Escape') overlay.classList.remove('active');
+	});
 </script>
 
 <script>
